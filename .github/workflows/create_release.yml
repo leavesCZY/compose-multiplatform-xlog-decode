@@ -1,0 +1,96 @@
+name: create release
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - "**/workflows-trigger.properties"
+
+jobs:
+
+  current-time:
+    runs-on: ubuntu-latest
+    name: get current time
+    outputs:
+      currentTime: ${{steps.currentTime.outputs.formattedTime}}
+    steps:
+      - id: currentTime
+        uses: josStorer/get-current-time@v2
+        with:
+          format: YYYY.MM.DD
+          utcOffset: "+08:00"
+
+  create-release-distribution:
+    strategy:
+      matrix:
+        os: [ windows-latest , ubuntu-latest , macos-13 , macos-14 ]
+    runs-on: ${{ matrix.os }}
+    name: create release distribution
+    needs: current-time
+
+    steps:
+      - if: matrix.os != 'macos-14'
+        name: setup jdk
+        uses: actions/setup-java@v4
+        with:
+          java-version: "18"
+          distribution: "zulu"
+          architecture: x64
+
+      - if: matrix.os == 'macos-14'
+        name: setup jdk
+        uses: actions/setup-java@v4
+        with:
+          java-version: "18"
+          distribution: "zulu"
+          architecture: aarch64
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: packageReleaseDistributionForCurrentOS
+        run: ./gradlew packageReleaseDistributionForCurrentOS
+
+      - if: matrix.os == 'windows-latest'
+        name: rename File
+        run: |
+          mv ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-1.0.0.exe ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-windows-x64.exe
+
+      - if: matrix.os == 'windows-latest'
+        name: zip AppImage
+        uses: thedoctor0/zip-release@0.7.6
+        with:
+          type: "zip"
+          filename: "compose-multiplatform-xlog-decode-windows-x64.zip"
+          directory: "./build/compose/binaries/main-release/app/compose-multiplatform-xlog-decode"
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: rename File
+        run: |
+          mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode_1.0.0_amd64.deb      /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode-linux-amd64.deb
+          mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-1.0.0-1.x86_64.rpm   /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-linux-x86_64.rpm
+
+      - if: matrix.os == 'macos-13'
+        name: rename File
+        run: |
+          mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-1.0.0.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-mac-x64.dmg
+
+      - if: matrix.os == 'macos-14'
+        name: rename File
+        run: |
+          mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-1.0.0.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-mac-arm64.dmg
+
+      - name: create a release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "**/compose-multiplatform-xlog-decode-windows-x64.exe,**/compose-multiplatform-xlog-decode-windows-x64.zip,**/*.deb,**/*.rpm,**/*.dmg"
+          body: "create by workflows"
+          allowUpdates: true
+          artifactErrorsFailBuild: false
+          generateReleaseNotes: false
+          tag: ${{needs.current-time.outputs.currentTime}}
+          name: ${{needs.current-time.outputs.currentTime}}
+          token: ${{secrets.ACTION_TOKEN}}

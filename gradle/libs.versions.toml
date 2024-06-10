@@ -1,0 +1,19 @@
+[versions]
+jetbrains-kotlin-plugin = "2.0.0"
+jetbrains-compose-plugin = "1.6.11"
+
+androidx-datastore = "1.1.1"
+luben-zstd-jni = "1.5.6-3"
+bouncycastle-bcprov-jdk18on = "1.78.1"
+jetbrains-lifecycle-viewmodel-compose = "2.8.0"
+
+[plugins]
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrains-kotlin-plugin" }
+jetbrains-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "jetbrains-kotlin-plugin" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose-plugin" }
+
+[libraries]
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
+jetbrains-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle-viewmodel-compose" }
+luben-zstd-jni = { module = "com.github.luben:zstd-jni", version.ref = "luben-zstd-jni" }
+bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle-bcprov-jdk18on" }
