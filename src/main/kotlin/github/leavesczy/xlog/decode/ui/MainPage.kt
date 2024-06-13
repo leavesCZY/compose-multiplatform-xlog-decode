@@ -76,7 +76,7 @@ fun MainPage(
                         val outFile = pageViewState.decodeLog()
                         if (outFile != null) {
                             val result = snackBarHostState.showSnackbar(
-                                message = "解密成功，文件路径：" + outFile.absolutePath,
+                                message = "解析成功，文件路径：" + outFile.absolutePath,
                                 actionLabel = "打开文件",
                                 withDismissAction = true,
                                 duration = SnackbarDuration.Short
@@ -97,7 +97,7 @@ fun MainPage(
         ) {
             Text(
                 modifier = Modifier,
-                text = "解密日志"
+                text = "解析日志"
             )
         }
         RuntimeLog(

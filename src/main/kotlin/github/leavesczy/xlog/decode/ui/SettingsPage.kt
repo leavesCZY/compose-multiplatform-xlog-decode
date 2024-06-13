@@ -2,9 +2,10 @@ package github.leavesczy.xlog.decode.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.*
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,18 +78,7 @@ fun SettingsPage(pageViewState: SettingsPageViewState) {
             val checked = pageViewState.autOpenFileWhenParsingIsSuccessful
             Switch(
                 checked = checked,
-                onCheckedChange = pageViewState.updateAutOpenFileWhenParsingIsSuccessful,
-                thumbContent = if (checked) {
-                    {
-                        Icon(
-                            imageVector = Icons.Filled.Check,
-                            contentDescription = null,
-                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                        )
-                    }
-                } else {
-                    null
-                }
+                onCheckedChange = pageViewState.updateAutOpenFileWhenParsingIsSuccessful
             )
         }
     }

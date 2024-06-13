@@ -116,7 +116,7 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
                     outFile = outFile
                 )
                 appendLog {
-                    "解密成功，文件路径：" + outFile.absolutePath
+                    "解析成功，文件路径：" + outFile.absolutePath
                 }
                 autoOpenFileIfNeed(file = outFile)
                 outFile
