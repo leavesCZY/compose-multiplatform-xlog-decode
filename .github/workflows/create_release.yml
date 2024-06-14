@@ -48,26 +48,26 @@ jobs:
       - if: matrix.os == 'windows-latest'
         name: rename File
         run: |
-          mv ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.exe ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-windows-x86-64.exe
+          mv ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.exe ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-windows-x86_64.exe
 
       - if: matrix.os == 'windows-latest'
         name: zip AppImage
         uses: thedoctor0/zip-release@0.7.6
         with:
           type: "zip"
-          filename: "compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-windows-x86-64.zip"
+          filename: "compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-windows-x86_64.zip"
           directory: "./build/compose/binaries/main-release/app/compose-multiplatform-xlog-decode"
 
       - if: matrix.os == 'ubuntu-latest'
         name: rename File
         run: |
-          mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}-1.x86_64.rpm   /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-linux-x86-64.rpm          
+          mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}-1.x86_64.rpm   /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-linux-x86_64.rpm          
           mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode_${{env.PACKAGE_VERSION}}_amd64.deb      /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-linux-amd64.deb
 
       - if: matrix.os == 'macos-13'
         name: rename File
         run: |
-          mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-macos-x86-64.dmg
+          mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-macos-x86_64.dmg
 
       - if: matrix.os == 'macos-14'
         name: rename File
@@ -79,6 +79,7 @@ jobs:
         uses: josStorer/get-current-time@v2
         with:
           format: YYYY-MM-DD
+          utcOffset: "+08:00"
 
       - name: draft a new release
         uses: ncipollo/release-action@v1
@@ -86,7 +87,7 @@ jobs:
           token: ${{secrets.ACTION_TOKEN}}
           allowUpdates: true
           artifactErrorsFailBuild: false
-          generateReleaseNotes: false
+          generateReleaseNotes: true
           artifacts: "**/exe/*.exe,**/app/compose-multiplatform-xlog-decode/*.zip,**/deb/*.deb,**/rpm/*.rpm,**/dmg/*.dmg"
           body: "## ${{env.V_PACKAGE_VERSION}} / ${{steps.currentTime.outputs.formattedTime}}"
           tag: "${{env.V_PACKAGE_VERSION}}"

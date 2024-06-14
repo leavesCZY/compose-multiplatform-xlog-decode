@@ -7,9 +7,6 @@ plugins {
     alias(libs.plugins.jetbrains.compose.compiler)
 }
 
-group = "github.leavesczy"
-version = "1.0.0"
-
 kotlin {
     jvmToolchain(18)
     compilerOptions {
