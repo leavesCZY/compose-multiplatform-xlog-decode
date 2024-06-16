@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.vector.ImageVector
 import java.io.File
+import java.nio.file.Path
 
 /**
  * @Author: leavesCZY
@@ -30,10 +31,12 @@ enum class Theme(val type: Int) {
 data class MainPageViewState(
     val page: Page,
     val privateKey: String,
+    val openDialog: DialogState<Path?>,
     val logPath: String,
     val runtimeLog: String,
     val logScrollState: ScrollState,
     val onInputPrivateKey: (String) -> Unit,
+    val openFileDialog: suspend () -> Unit,
     val onInputLogFilePath: (String) -> Unit,
     val decodeLog: suspend () -> File?,
     val openFile: suspend (File) -> Unit,

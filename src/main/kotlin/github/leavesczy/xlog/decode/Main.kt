@@ -9,10 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.window.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import github.leavesczy.xlog.decode.ui.CryptKeyPage
 import github.leavesczy.xlog.decode.ui.MainPage
@@ -42,7 +39,7 @@ fun main() = application {
 }
 
 @Composable
-private fun Main() {
+private fun FrameWindowScope.Main() {
     val logDecodeViewModel = viewModel { LogDecodeViewModel() }
     val pageViewState = logDecodeViewModel.mainPageViewState
     AppTheme(theme = logDecodeViewModel.settingsPageViewState.theme) {

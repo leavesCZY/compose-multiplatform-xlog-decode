@@ -30,10 +30,12 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
         value = MainPageViewState(
             page = Page.Main,
             privateKey = "",
+            openDialog = DialogState(),
             logPath = "",
             runtimeLog = "",
             logScrollState = ScrollState(initial = 0),
             onInputPrivateKey = ::onInputPrivateKey,
+            openFileDialog = ::openFileDialog,
             onInputLogFilePath = ::onInputLogFilePath,
             decodeLog = ::decodeLog,
             openFile = ::openFile,
@@ -104,6 +106,10 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
         mainPageViewState = mainPageViewState.copy(logPath = logPath)
     }
 
+    private suspend fun openFileDialog() {
+        mainPageViewState.openDialog.awaitResult()
+    }
+
     private suspend fun decodeLog(): File? {
         return withContext(context = Dispatchers.Default) {
             val logPath = mainPageViewState.logPath
@@ -116,7 +122,7 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
                     outFile = outFile
                 )
                 appendLog {
-                    "解析成功，文件路径：" + outFile.absolutePath
+                    "解析成功，文件路径：" + outFile.absolutePath + "\n\n"
                 }
                 autoOpenFileIfNeed(file = outFile)
                 outFile
@@ -125,7 +131,7 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
                 appendLog {
                     val stringWriter = StringWriter()
                     throwable.printStackTrace(PrintWriter(stringWriter, true))
-                    stringWriter.buffer.toString()
+                    stringWriter.toString()
                 }
                 null
             }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
@@ -18,10 +17,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.FrameWindowScope
 import kotlinx.coroutines.launch
-import java.awt.FileDialog
 import java.io.File
 import java.net.URI
+import java.nio.file.Path
 import kotlin.io.path.pathString
 import kotlin.io.path.toPath
 
@@ -30,14 +30,32 @@ import kotlin.io.path.toPath
  * @Date: 2024/6/4 14:15
  * @Desc:
  */
-private const val xLogFileExtension = "xlog"
+internal const val xLogFileExtension = "xlog"
 
 @Composable
-fun MainPage(
+fun FrameWindowScope.MainPage(
     pageViewState: MainPageViewState,
     snackBarHostState: SnackbarHostState
 ) {
     val coroutineScope = rememberCoroutineScope()
+    fun confirmLogFilePath(paths: List<Path>) {
+        val filePath = paths.firstNotNullOfOrNull {
+            val pathString = it.pathString
+            val file = File(pathString)
+            if (file.exists() && file.isFile && file.extension == xLogFileExtension) {
+                pathString
+            } else {
+                null
+            }
+        }
+        if (filePath != null) {
+            pageViewState.onInputLogFilePath(filePath)
+        } else {
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(message = "请选择 $xLogFileExtension 文件")
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,13 +69,10 @@ fun MainPage(
         )
         LogFilePath(
             logPath = pageViewState.logPath,
-            onInputLogFilePath = {
-                if (it.endsWith(suffix = xLogFileExtension)) {
-                    pageViewState.onInputLogFilePath(it)
-                } else {
-                    coroutineScope.launch {
-                        snackBarHostState.showSnackbar(message = "请选择 $xLogFileExtension 文件")
-                    }
+            confirmLogFilePath = ::confirmLogFilePath,
+            openFileDialog = {
+                coroutineScope.launch {
+                    pageViewState.openFileDialog()
                 }
             }
         )
@@ -105,6 +120,19 @@ fun MainPage(
             scrollState = pageViewState.logScrollState
         )
     }
+    if (pageViewState.openDialog.isAwaiting) {
+        FileLoadDialog(
+            title = "请选择 $xLogFileExtension 文件",
+            isMultipleMode = false,
+            fileExtension = xLogFileExtension,
+            onResult = {
+                if (it != null) {
+                    confirmLogFilePath(paths = listOf(it))
+                }
+                pageViewState.openDialog.onResult(it)
+            }
+        )
+    }
 }
 
 @Composable
@@ -130,7 +158,8 @@ private fun PrivateKey(
 @Composable
 private fun LogFilePath(
     logPath: String,
-    onInputLogFilePath: (String) -> Unit
+    confirmLogFilePath: (List<Path>) -> Unit,
+    openFileDialog: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -162,18 +191,10 @@ private fun LogFilePath(
                         isDragging = false
                         val dragData = value.dragData
                         if (dragData is DragData.FilesList) {
-                            val file = dragData.readFiles().firstNotNullOfOrNull {
-                                val path = URI(it).toPath().pathString
-                                val file = File(path)
-                                if (file.exists() && file.isFile) {
-                                    file
-                                } else {
-                                    null
-                                }
+                            val paths = dragData.readFiles().map {
+                                URI(it).toPath()
                             }
-                            if (file != null) {
-                                onInputLogFilePath(file.absolutePath)
-                            }
+                            confirmLogFilePath(paths)
                         }
                     }
                 ),
@@ -192,23 +213,7 @@ private fun LogFilePath(
             modifier = Modifier
                 .matchParentSize()
                 .clip(shape = RoundedCornerShape(size = 16.dp))
-                .clickable {
-                    val fileDialog = FileDialog(ComposeWindow(), "请选择 $xLogFileExtension 文件")
-                    fileDialog.apply {
-                        mode = FileDialog.LOAD
-                        isMultipleMode = false
-                        setFilenameFilter { _, name ->
-                            name.endsWith(suffix = xLogFileExtension)
-                        }
-                        isVisible = true
-                        val fileDirectory = fileDialog.directory
-                        val fileName = fileDialog.file
-                        if (!fileDirectory.isNullOrBlank() && !fileName.isNullOrBlank()) {
-                            val filePath = fileDirectory + fileName
-                            onInputLogFilePath(filePath)
-                        }
-                    }
-                }
+                .clickable(onClick = openFileDialog)
         )
     }
 }
