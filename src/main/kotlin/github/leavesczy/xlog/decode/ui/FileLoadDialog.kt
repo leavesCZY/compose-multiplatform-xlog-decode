@@ -14,8 +14,8 @@ import java.nio.file.Path
 @Composable
 fun FrameWindowScope.FileLoadDialog(
     title: String = "Choose a file",
-    fileExtension: String? = null,
-    isMultipleMode: Boolean = false,
+    isMultipleMode: Boolean,
+    fileExtension: String?,
     onResult: (result: Path?) -> Unit
 ) = AwtWindow(
     create = {

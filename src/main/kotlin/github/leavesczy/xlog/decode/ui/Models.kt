@@ -53,7 +53,7 @@ data class CryptKeyPageViewState(
 @Stable
 data class SettingsPageViewState(
     val theme: Theme,
-    val autOpenFileWhenParsingIsSuccessful: Boolean,
     val switchTheme: (Theme) -> Unit,
-    val updateAutOpenFileWhenParsingIsSuccessful: (Boolean) -> Unit
+    val autoOpenFileWhenParsingIsSuccessful: Boolean,
+    val updateAutoOpenFileWhenParsingIsSuccessful: (Boolean) -> Unit
 )

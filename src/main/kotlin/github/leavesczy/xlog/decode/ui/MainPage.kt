@@ -30,7 +30,7 @@ import kotlin.io.path.toPath
  * @Date: 2024/6/4 14:15
  * @Desc:
  */
-internal const val xLogFileExtension = "xlog"
+private const val xLogFileExtension = "xlog"
 
 @Composable
 fun FrameWindowScope.MainPage(
@@ -127,9 +127,9 @@ fun FrameWindowScope.MainPage(
             fileExtension = xLogFileExtension,
             onResult = {
                 if (it != null) {
-                    confirmLogFilePath(paths = listOf(it))
+                    confirmLogFilePath(paths = listOf(element = it))
                 }
-                pageViewState.openDialog.onResult(it)
+                pageViewState.openDialog.onResult(result = it)
             }
         )
     }

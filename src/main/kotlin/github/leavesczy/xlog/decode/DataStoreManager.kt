@@ -20,7 +20,7 @@ object DataStoreManager {
 
     private val THEME = intPreferencesKey("theme")
 
-    private val AUT_OPEN_FILE_WHEN_PARSING_IS_SUCCESSFUL = booleanPreferencesKey("autOpenFileWhenParsingIsSuccessful")
+    private val AUTO_OPEN_FILE_WHEN_PARSING_IS_SUCCESSFUL = booleanPreferencesKey("autoOpenFileWhenParsingIsSuccessful")
 
     fun privateKeyFlow(): Flow<String> {
         return dataStores.data.map { preferences ->
@@ -34,9 +34,9 @@ object DataStoreManager {
         }
     }
 
-    fun autOpenFileWhenParsingIsSuccessful(): Flow<Boolean> {
+    fun autoOpenFileWhenParsingIsSuccessful(): Flow<Boolean> {
         return dataStores.data.map { preferences ->
-            preferences[AUT_OPEN_FILE_WHEN_PARSING_IS_SUCCESSFUL] ?: true
+            preferences[AUTO_OPEN_FILE_WHEN_PARSING_IS_SUCCESSFUL] ?: true
         }
     }
 
@@ -52,9 +52,9 @@ object DataStoreManager {
         }
     }
 
-    suspend fun autOpenFileWhenParsingIsSuccessful(autoOpen: Boolean) {
+    suspend fun autoOpenFileWhenParsingIsSuccessful(autoOpen: Boolean) {
         dataStores.edit { settings ->
-            settings[AUT_OPEN_FILE_WHEN_PARSING_IS_SUCCESSFUL] = autoOpen
+            settings[AUTO_OPEN_FILE_WHEN_PARSING_IS_SUCCESSFUL] = autoOpen
         }
     }
 

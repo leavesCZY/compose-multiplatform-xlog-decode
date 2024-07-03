@@ -75,10 +75,10 @@ fun SettingsPage(pageViewState: SettingsPageViewState) {
                 modifier = Modifier,
                 text = "解析成功后自动打开文件"
             )
-            val checked = pageViewState.autOpenFileWhenParsingIsSuccessful
+            val checked = pageViewState.autoOpenFileWhenParsingIsSuccessful
             Switch(
                 checked = checked,
-                onCheckedChange = pageViewState.updateAutOpenFileWhenParsingIsSuccessful
+                onCheckedChange = pageViewState.updateAutoOpenFileWhenParsingIsSuccessful
             )
         }
     }

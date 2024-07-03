@@ -56,9 +56,9 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
     var settingsPageViewState by mutableStateOf(
         value = SettingsPageViewState(
             theme = Theme.Light,
-            autOpenFileWhenParsingIsSuccessful = false,
             switchTheme = ::switchTheme,
-            updateAutOpenFileWhenParsingIsSuccessful = ::updateAutOpenFileWhenParsingIsSuccessful
+            autoOpenFileWhenParsingIsSuccessful = false,
+            updateAutoOpenFileWhenParsingIsSuccessful = ::updateAutoOpenFileWhenParsingIsSuccessful
         )
     )
         private set
@@ -83,14 +83,14 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
         val privateKey = DataStoreManager.privateKeyFlow().first()
         val themeType = DataStoreManager.themeFlow().first()
         val theme = Theme.entries.find { it.type == themeType } ?: settingsPageViewState.theme
-        val autOpenFileWhenParsingIsSuccessful = DataStoreManager.autOpenFileWhenParsingIsSuccessful().first()
+        val autOpenFileWhenParsingIsSuccessful = DataStoreManager.autoOpenFileWhenParsingIsSuccessful().first()
         if (mainPageViewState.privateKey != privateKey) {
             mainPageViewState = mainPageViewState.copy(privateKey = privateKey)
         }
-        if (settingsPageViewState.theme != theme || settingsPageViewState.autOpenFileWhenParsingIsSuccessful != autOpenFileWhenParsingIsSuccessful) {
+        if (settingsPageViewState.theme != theme || settingsPageViewState.autoOpenFileWhenParsingIsSuccessful != autOpenFileWhenParsingIsSuccessful) {
             settingsPageViewState = settingsPageViewState.copy(
                 theme = theme,
-                autOpenFileWhenParsingIsSuccessful = autOpenFileWhenParsingIsSuccessful
+                autoOpenFileWhenParsingIsSuccessful = autOpenFileWhenParsingIsSuccessful
             )
         }
     }
@@ -163,18 +163,20 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
     }
 
     private suspend fun autoOpenFileIfNeed(file: File) {
-        if (settingsPageViewState.autOpenFileWhenParsingIsSuccessful) {
+        if (settingsPageViewState.autoOpenFileWhenParsingIsSuccessful) {
             openFile(file = file)
         }
     }
 
     private fun generateKeyPair() {
         viewModelScope.launch {
-            val keyPair = DecryptUtils.generateKeyPair()
-            cryptKeyPageViewState = cryptKeyPageViewState.copy(
-                privateKey = keyPair.privateKey,
-                publicKey = keyPair.publicKey
-            )
+            withContext(context = Dispatchers.Default) {
+                val keyPair = DecryptUtils.generateKeyPair()
+                cryptKeyPageViewState = cryptKeyPageViewState.copy(
+                    privateKey = keyPair.privateKey,
+                    publicKey = keyPair.publicKey
+                )
+            }
         }
     }
 
@@ -183,16 +185,16 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
     }
 
     private fun switchTheme(theme: Theme) {
-        settingsPageViewState = settingsPageViewState.copy(theme = theme)
         viewModelScope.launch {
+            settingsPageViewState = settingsPageViewState.copy(theme = theme)
             DataStoreManager.updateTheme(theme = theme.type)
         }
     }
 
-    private fun updateAutOpenFileWhenParsingIsSuccessful(autoOpen: Boolean) {
-        settingsPageViewState = settingsPageViewState.copy(autOpenFileWhenParsingIsSuccessful = autoOpen)
+    private fun updateAutoOpenFileWhenParsingIsSuccessful(autoOpen: Boolean) {
         viewModelScope.launch {
-            DataStoreManager.autOpenFileWhenParsingIsSuccessful(autoOpen = autoOpen)
+            settingsPageViewState = settingsPageViewState.copy(autoOpenFileWhenParsingIsSuccessful = autoOpen)
+            DataStoreManager.autoOpenFileWhenParsingIsSuccessful(autoOpen = autoOpen)
         }
     }
 

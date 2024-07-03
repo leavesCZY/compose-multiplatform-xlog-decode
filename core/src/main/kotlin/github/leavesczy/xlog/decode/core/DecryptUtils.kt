@@ -82,10 +82,7 @@ object DecryptUtils {
     }
 
     private fun bytesToInt(b: ByteArray, offset: Int): Int {
-        return b[offset].toInt() and 0xFF or (
-                (b[offset + 1].toInt() and 0xFF) shl 8) or (
-                (b[offset + 2].toInt() and 0xFF) shl 16) or (
-                (b[offset + 3].toInt() and 0xFF) shl 24)
+        return b[offset].toInt() and 0xFF or ((b[offset + 1].toInt() and 0xFF) shl 8) or ((b[offset + 2].toInt() and 0xFF) shl 16) or ((b[offset + 3].toInt() and 0xFF) shl 24)
     }
 
     private fun teaDecipher(byteArray: ByteArray, k: ByteArray): ByteArray {

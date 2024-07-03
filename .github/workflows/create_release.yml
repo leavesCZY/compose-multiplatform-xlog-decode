@@ -7,10 +7,22 @@ on:
       - "**/workflows-trigger.properties"
 
 env:
-  PACKAGE_VERSION: 1.0.0
-  V_PACKAGE_VERSION: v1.0.0
+  PACKAGE_VERSION: 1.0.1
+  V_PACKAGE_VERSION: v1.0.1
 
 jobs:
+
+  current-time:
+    runs-on: ubuntu-latest
+    name: get current time
+    outputs:
+      currentTime: ${{steps.currentTime.outputs.formattedTime}}
+    steps:
+      - id: currentTime
+        uses: josStorer/get-current-time@v2
+        with:
+          format: YYYY.MM.DD
+          utcOffset: "+08:00"
 
   create-release-distribution:
     strategy:
@@ -18,6 +30,7 @@ jobs:
         os: [ windows-latest , ubuntu-latest , macos-13 , macos-14 ]
     runs-on: ${{ matrix.os }}
     name: create release distribution
+    needs: current-time
 
     steps:
       - if: matrix.os != 'macos-14'
@@ -74,13 +87,6 @@ jobs:
         run: |
           mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-macos-arm64.dmg
 
-      - name: get current time
-        id: currentTime
-        uses: josStorer/get-current-time@v2
-        with:
-          format: YYYY-MM-DD
-          utcOffset: "+08:00"
-
       - name: draft a new release
         uses: ncipollo/release-action@v1
         with:
@@ -89,6 +95,6 @@ jobs:
           artifactErrorsFailBuild: false
           generateReleaseNotes: true
           artifacts: "**/exe/*.exe,**/app/compose-multiplatform-xlog-decode/*.zip,**/deb/*.deb,**/rpm/*.rpm,**/dmg/*.dmg"
-          body: "## ${{env.V_PACKAGE_VERSION}} / ${{steps.currentTime.outputs.formattedTime}}"
+          body: "## ${{env.V_PACKAGE_VERSION}} / ${{needs.current-time.outputs.currentTime}}"
           tag: "${{env.V_PACKAGE_VERSION}}"
           name: "${{env.V_PACKAGE_VERSION}}"
