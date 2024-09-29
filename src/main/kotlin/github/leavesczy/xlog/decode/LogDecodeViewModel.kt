@@ -16,8 +16,10 @@ import java.awt.Desktop
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.nio.file.Path
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.io.path.pathString
 
 /**
  * @Author: leavesCZY
@@ -102,8 +104,8 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
         }
     }
 
-    private fun onInputLogFilePath(logPath: String) {
-        mainPageViewState = mainPageViewState.copy(logPath = logPath)
+    private fun onInputLogFilePath(logPath: Path) {
+        mainPageViewState = mainPageViewState.copy(logPath = logPath.pathString)
     }
 
     private suspend fun openFileDialog() {

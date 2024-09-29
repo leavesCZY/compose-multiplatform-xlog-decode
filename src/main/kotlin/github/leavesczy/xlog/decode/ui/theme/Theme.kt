@@ -13,11 +13,18 @@ import androidx.compose.ui.unit.sp
 import github.leavesczy.xlog.decode.ui.Theme
 
 private val Typography = Typography(
-    bodyLarge = TextStyle(
+    labelLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
+        lineHeight = 22.sp,
+        letterSpacing = 0.5.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 17.sp,
+        lineHeight = 22.sp,
         letterSpacing = 0.5.sp
     )
 )

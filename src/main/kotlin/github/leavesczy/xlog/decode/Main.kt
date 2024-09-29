@@ -121,7 +121,7 @@ private fun preferredWindowSize(): DpSize {
     val screenSize = Toolkit.getDefaultToolkit().screenSize
     val screenWidth = screenSize.width
     val screenHeight = screenSize.height
-    val preferredWidth = screenWidth * 0.50f
-    val preferredHeight = screenHeight * 0.60f
+    val preferredWidth = screenWidth * 0.60f
+    val preferredHeight = screenHeight * 0.75f
     return DpSize(preferredWidth.dp, preferredHeight.dp)
 }

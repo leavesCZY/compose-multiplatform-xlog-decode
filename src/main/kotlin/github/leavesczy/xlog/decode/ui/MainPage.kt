@@ -1,12 +1,21 @@
 package github.leavesczy.xlog.decode.ui
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draganddrop.DragAndDropEvent
+import androidx.compose.ui.draganddrop.DragAndDropTarget
+import androidx.compose.ui.draganddrop.DragData
+import androidx.compose.ui.draganddrop.dragData
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
@@ -32,30 +41,17 @@ import kotlin.io.path.toPath
  */
 private const val xLogFileExtension = "xlog"
 
+private fun Path.isXLogFile(): Boolean {
+    val file = File(pathString)
+    return file.exists() && file.isFile && file.extension == xLogFileExtension
+}
+
 @Composable
 fun FrameWindowScope.MainPage(
     pageViewState: MainPageViewState,
     snackBarHostState: SnackbarHostState
 ) {
     val coroutineScope = rememberCoroutineScope()
-    fun confirmLogFilePath(paths: List<Path>) {
-        val filePath = paths.firstNotNullOfOrNull {
-            val pathString = it.pathString
-            val file = File(pathString)
-            if (file.exists() && file.isFile && file.extension == xLogFileExtension) {
-                pathString
-            } else {
-                null
-            }
-        }
-        if (filePath != null) {
-            pageViewState.onInputLogFilePath(filePath)
-        } else {
-            coroutineScope.launch {
-                snackBarHostState.showSnackbar(message = "请选择 $xLogFileExtension 文件")
-            }
-        }
-    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,18 +59,20 @@ fun FrameWindowScope.MainPage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(space = 10.dp)
     ) {
-        PrivateKey(
-            privateKey = pageViewState.privateKey,
-            onInputPrivateKey = pageViewState.onInputPrivateKey
-        )
         LogFilePath(
             logPath = pageViewState.logPath,
-            confirmLogFilePath = ::confirmLogFilePath,
+            confirmLogFilePath = {
+                pageViewState.onInputLogFilePath(it)
+            },
             openFileDialog = {
                 coroutineScope.launch {
                     pageViewState.openFileDialog()
                 }
             }
+        )
+        PrivateKey(
+            privateKey = pageViewState.privateKey,
+            onInputPrivateKey = pageViewState.onInputPrivateKey
         )
         Button(
             modifier = Modifier
@@ -121,13 +119,20 @@ fun FrameWindowScope.MainPage(
         )
     }
     if (pageViewState.openDialog.isAwaiting) {
+        val fileExtension = xLogFileExtension
         FileLoadDialog(
-            title = "请选择 $xLogFileExtension 文件",
+            title = "请选择 $fileExtension 文件",
             isMultipleMode = false,
-            fileExtension = xLogFileExtension,
+            fileExtension = fileExtension,
             onResult = {
                 if (it != null) {
-                    confirmLogFilePath(paths = listOf(element = it))
+                    if (it.isXLogFile()) {
+                        pageViewState.onInputLogFilePath(it)
+                    } else {
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(message = "请选择 $fileExtension 文件")
+                        }
+                    }
                 }
                 pageViewState.openDialog.onResult(result = it)
             }
@@ -158,45 +163,47 @@ private fun PrivateKey(
 @Composable
 private fun LogFilePath(
     logPath: String,
-    confirmLogFilePath: (List<Path>) -> Unit,
+    confirmLogFilePath: (Path) -> Unit,
     openFileDialog: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        var isDragging by remember {
-            mutableStateOf(value = false)
-        }
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .dashedBorder(
-                    color = if (isDragging) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        Color.Transparent
-                    },
-                    strokeWidth = 2.dp,
-                    radius = 16.dp
-                )
-                .onExternalDrag(
-                    onDragStart = {
-                        isDragging = true
-                    },
-                    onDragExit = {
-                        isDragging = false
-                    },
-                    onDrop = { value ->
-                        isDragging = false
-                        val dragData = value.dragData
+                .dragAndDropTarget(
+                    shouldStartDragAndDrop = { startEvent ->
+                        val dragData = startEvent.dragData()
                         if (dragData is DragData.FilesList) {
-                            val paths = dragData.readFiles().map {
-                                URI(it).toPath()
+                            val files = dragData.readFiles()
+                            files.any {
+                                URI(it).toPath().isXLogFile()
                             }
-                            confirmLogFilePath(paths)
+                        } else {
+                            false
                         }
-                    }
+                    },
+                    target = object : DragAndDropTarget {
+                        override fun onDrop(event: DragAndDropEvent): Boolean {
+                            val dragData = event.dragData() as DragData.FilesList
+                            val files = dragData.readFiles()
+                            val paths = files.mapNotNull {
+                                val path = URI(it).toPath()
+                                if (path.isXLogFile()) {
+                                    path
+                                } else {
+                                    null
+                                }
+                            }
+                            val path = paths.firstOrNull()
+                            if (path != null) {
+                                confirmLogFilePath(path)
+                            }
+                            return true
+                        }
+                    },
                 ),
             value = logPath,
             readOnly = true,

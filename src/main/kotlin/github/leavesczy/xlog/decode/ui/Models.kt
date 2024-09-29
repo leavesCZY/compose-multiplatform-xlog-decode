@@ -37,7 +37,7 @@ data class MainPageViewState(
     val logScrollState: ScrollState,
     val onInputPrivateKey: (String) -> Unit,
     val openFileDialog: suspend () -> Unit,
-    val onInputLogFilePath: (String) -> Unit,
+    val onInputLogFilePath: (Path) -> Unit,
     val decodeLog: suspend () -> File?,
     val openFile: suspend (File) -> Unit,
     val switchPage: (Page) -> Unit

@@ -32,7 +32,7 @@ tasks {
             "META-INF/*.LIST",
             "META-INF/*.kotlin_module",
             "META-INF/LICENSE",
-            "META-INF/LICENSE.txt",
+            "META-INF/LICENSE.txt"
         )
     }
 }
@@ -83,7 +83,7 @@ compose.desktop {
                 }
             }
             packageName = mPackageName
-            packageVersion = "1.0.1"
+            packageVersion = "1.0.2"
             description = "compose multiplatform xlog decode"
             copyright = "© 2024 leavesCZY. All rights reserved."
             vendor = "leavesCZY"
