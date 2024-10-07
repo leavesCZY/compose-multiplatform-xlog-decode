@@ -42,6 +42,7 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
+    implementation(compose.components.resources)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.jetbrains.lifecycle.viewmodel.compose)
 }
@@ -83,7 +84,7 @@ compose.desktop {
                 }
             }
             packageName = mPackageName
-            packageVersion = "1.0.2"
+            packageVersion = "1.1.0"
             description = "compose multiplatform xlog decode"
             copyright = "© 2024 leavesCZY. All rights reserved."
             vendor = "leavesCZY"

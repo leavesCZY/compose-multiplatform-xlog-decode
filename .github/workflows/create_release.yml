@@ -7,8 +7,8 @@ on:
       - "**/workflows-trigger.properties"
 
 env:
-  PACKAGE_VERSION: 1.0.2
-  V_PACKAGE_VERSION: v1.0.2
+  PACKAGE_VERSION: 1.1.0
+  V_PACKAGE_VERSION: v1.1.0
 
 jobs:
 
@@ -68,8 +68,8 @@ jobs:
         uses: thedoctor0/zip-release@0.7.6
         with:
           type: "zip"
-          filename: "compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-windows-x86_64.zip"
           directory: "./build/compose/binaries/main-release/app/compose-multiplatform-xlog-decode"
+          filename: "compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-windows-x86_64.zip"
 
       - if: matrix.os == 'ubuntu-latest'
         name: rename File

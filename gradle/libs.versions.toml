@@ -1,6 +1,6 @@
 [versions]
 jetbrains-kotlin = "2.0.20"
-jetbrains-compose = "1.7.0-beta02"
+jetbrains-compose = "1.7.0-rc01"
 
 androidx-datastore = "1.1.1"
 jetbrains-lifecycle-viewmodel-compose = "2.8.2"

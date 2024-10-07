@@ -12,7 +12,7 @@ import java.io.File
 import java.nio.file.Path
 
 @Composable
-fun FrameWindowScope.FileLoadDialog(
+fun FrameWindowScope.FileDialog(
     title: String = "Choose a file",
     isMultipleMode: Boolean,
     fileExtension: String?,

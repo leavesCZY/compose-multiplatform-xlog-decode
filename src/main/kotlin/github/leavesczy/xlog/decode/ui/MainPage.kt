@@ -120,7 +120,7 @@ fun FrameWindowScope.MainPage(
     }
     if (pageViewState.openDialog.isAwaiting) {
         val fileExtension = xLogFileExtension
-        FileLoadDialog(
+        FileDialog(
             title = "请选择 $fileExtension 文件",
             isMultipleMode = false,
             fileExtension = fileExtension,
