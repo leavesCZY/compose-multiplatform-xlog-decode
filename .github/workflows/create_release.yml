@@ -7,8 +7,8 @@ on:
       - "**/workflows-trigger.properties"
 
 env:
-  PACKAGE_VERSION: 1.1.0
-  V_PACKAGE_VERSION: v1.1.0
+  PACKAGE_VERSION: 1.1.1
+  V_PACKAGE_VERSION: v1.1.1
 
 jobs:
 
