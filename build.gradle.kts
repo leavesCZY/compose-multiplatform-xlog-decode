@@ -84,7 +84,7 @@ compose.desktop {
                 }
             }
             packageName = mPackageName
-            packageVersion = "1.1.2"
+            packageVersion = "1.1.3"
             description = "compose multiplatform xlog decode"
             copyright = "© 2024 leavesCZY. All rights reserved."
             vendor = "leavesCZY"
