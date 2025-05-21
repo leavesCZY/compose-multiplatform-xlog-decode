@@ -145,9 +145,11 @@ class LogDecode(private val logger: Logger) {
                         lengthMarkStartIndex,
                         lengthMarkEndIndex - lengthMarkStartIndex
                     ).order(ByteOrder.LITTLE_ENDIAN).getInt()
-                    val endMarkIndex = index + marksSizeBeforeCryptKeyMagic + cryptKeyMagicByteSize + logByteSize
+                    val endMarkIndex =
+                        index + marksSizeBeforeCryptKeyMagic + cryptKeyMagicByteSize + logByteSize
                     if (endMarkIndex in 0..<bufferSize && buffer[endMarkIndex] == Magic.MagicEnd.MARK) {
-                        val logStartIndex = index + marksSizeBeforeCryptKeyMagic + cryptKeyMagicByteSize
+                        val logStartIndex =
+                            index + marksSizeBeforeCryptKeyMagic + cryptKeyMagicByteSize
                         val logBuffer = buffer.copyOfRange(
                             fromIndex = logStartIndex,
                             toIndex = logStartIndex + logByteSize

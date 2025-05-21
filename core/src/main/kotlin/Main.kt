@@ -2,7 +2,7 @@ import github.leavesczy.xlog.decode.core.LogDecode
 import github.leavesczy.xlog.decode.core.Logger
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 /**
  * @Author: leavesCZY
@@ -32,7 +32,8 @@ private fun decodeFile(logFile: File, privateKey: String) {
         }
     })
     val logFileName = logFile.nameWithoutExtension
-    val outFileName = logFileName + "_" + SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(Date()) + ".txt"
+    val outFileName =
+        logFileName + "_" + SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(Date()) + ".txt"
     val outFile = File("core/build/$outFileName")
     logDecode.decodeFile(
         privateKey = privateKey,

@@ -9,16 +9,25 @@ import androidx.lifecycle.viewModelScope
 import github.leavesczy.xlog.decode.core.DecryptUtils
 import github.leavesczy.xlog.decode.core.LogDecode
 import github.leavesczy.xlog.decode.core.Logger
-import github.leavesczy.xlog.decode.ui.*
-import kotlinx.coroutines.*
+import github.leavesczy.xlog.decode.ui.CryptKeyPageViewState
+import github.leavesczy.xlog.decode.ui.DialogState
+import github.leavesczy.xlog.decode.ui.MainPageViewState
+import github.leavesczy.xlog.decode.ui.Page
+import github.leavesczy.xlog.decode.ui.SettingsPageViewState
+import github.leavesczy.xlog.decode.ui.Theme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.awt.Desktop
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.file.Path
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import kotlin.io.path.pathString
 
 /**
@@ -26,7 +35,8 @@ import kotlin.io.path.pathString
  * @Date: 2024/6/4 14:16
  * @Desc:
  */
-class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
+class LogDecodeViewModel :
+    ViewModel(viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
 
     var mainPageViewState by mutableStateOf(
         value = MainPageViewState(
@@ -85,7 +95,8 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
         val privateKey = DataStoreManager.privateKeyFlow().first()
         val themeType = DataStoreManager.themeFlow().first()
         val theme = Theme.entries.find { it.type == themeType } ?: settingsPageViewState.theme
-        val autOpenFileWhenParsingIsSuccessful = DataStoreManager.autoOpenFileWhenParsingIsSuccessful().first()
+        val autOpenFileWhenParsingIsSuccessful =
+            DataStoreManager.autoOpenFileWhenParsingIsSuccessful().first()
         if (mainPageViewState.privateKey != privateKey) {
             mainPageViewState = mainPageViewState.copy(privateKey = privateKey)
         }
@@ -142,14 +153,16 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
 
     private fun buildOutFile(logFile: File): File {
         val logFileName = logFile.nameWithoutExtension
-        val outFileName = logFileName + "_" + SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(Date()) + ".txt"
+        val outFileName =
+            logFileName + "_" + SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(Date()) + ".txt"
         return File(logFile.parentFile, outFileName)
     }
 
     private fun appendLog(log: () -> Any) {
         val mLog = log().toString()
         if (mLog.isNotBlank()) {
-            mainPageViewState = mainPageViewState.copy(runtimeLog = mainPageViewState.runtimeLog + mLog + "\n\n")
+            mainPageViewState =
+                mainPageViewState.copy(runtimeLog = mainPageViewState.runtimeLog + mLog + "\n\n")
         }
     }
 
@@ -195,7 +208,8 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
 
     private fun updateAutoOpenFileWhenParsingIsSuccessful(autoOpen: Boolean) {
         viewModelScope.launch {
-            settingsPageViewState = settingsPageViewState.copy(autoOpenFileWhenParsingIsSuccessful = autoOpen)
+            settingsPageViewState =
+                settingsPageViewState.copy(autoOpenFileWhenParsingIsSuccessful = autoOpen)
             DataStoreManager.autoOpenFileWhenParsingIsSuccessful(autoOpen = autoOpen)
         }
     }

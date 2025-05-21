@@ -1,29 +1,36 @@
 package github.leavesczy.xlog.decode.ui
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.draganddrop.DragData
 import androidx.compose.ui.draganddrop.dragData
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.FrameWindowScope
@@ -258,33 +265,3 @@ private fun RuntimeLog(
         )
     }
 }
-
-private fun Modifier.dashedBorder(
-    strokeWidth: Dp,
-    color: Color,
-    radius: Dp
-) = composed(
-    factory = {
-        val density = LocalDensity.current
-        val strokeWidthPx = with(density) {
-            strokeWidth.toPx()
-        }
-        val cornerRadius = with(density) {
-            radius.toPx()
-        }
-        then(
-            other = Modifier.drawWithCache {
-                onDrawBehind {
-                    drawRoundRect(
-                        color = color,
-                        style = Stroke(
-                            width = strokeWidthPx,
-                            pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(12f, 12f), phase = 6f)
-                        ),
-                        cornerRadius = CornerRadius(x = cornerRadius, y = cornerRadius)
-                    )
-                }
-            }
-        )
-    }
-)

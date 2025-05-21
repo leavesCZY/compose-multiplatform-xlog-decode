@@ -47,10 +47,10 @@ dependencies {
     implementation(libs.jetbrains.lifecycle.viewmodel.compose)
 }
 
-enum class OS(val id: String) {
-    Linux("linux"),
-    Windows("windows"),
-    MacOS("macos")
+enum class OS() {
+    Linux(),
+    Windows(),
+    MacOS()
 }
 
 val currentOS: OS by lazy {
@@ -84,7 +84,7 @@ compose.desktop {
                 }
             }
             packageName = mPackageName
-            packageVersion = "1.1.3"
+            packageVersion = "1.0.0"
             description = "compose multiplatform xlog decode"
             copyright = "© 2024 leavesCZY. All rights reserved."
             vendor = "leavesCZY"
