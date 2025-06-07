@@ -15,10 +15,22 @@ import java.nio.file.Path
  * @Date: 2024/6/4 14:15
  * @Desc:
  */
-enum class Page(val title: String, val icon: ImageVector) {
-    Main(title = "Log", icon = Icons.Outlined.Loop),
-    CryptKey(title = "密钥", icon = Icons.Outlined.Key),
-    Settings(title = "设置", icon = Icons.Outlined.Settings)
+enum class Page(
+    val title: String,
+    val icon: ImageVector
+) {
+    Main(
+        title = "Log",
+        icon = Icons.Outlined.Loop
+    ),
+    CryptKey(
+        title = "密钥",
+        icon = Icons.Outlined.Key
+    ),
+    Settings(
+        title = "设置",
+        icon = Icons.Outlined.Settings
+    )
 }
 
 enum class Theme(val type: Int) {

@@ -5,7 +5,7 @@
 - 解压和解密 xlog 日志文件
 - 生成加密 xlog 日志文件所需要的公钥和私钥
 
-Windows 系统推荐下载使用免安装版本 `compose-multiplatform-xlog-decode-vX.X.X-windows-x86_64.zip`
+Windows 系统推荐使用免安装版本 `compose-multiplatform-xlog-decode-windows-x86_64.zip`
 
 相关联的文章
 

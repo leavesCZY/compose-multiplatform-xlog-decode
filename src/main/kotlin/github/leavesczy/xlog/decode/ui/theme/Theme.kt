@@ -16,15 +16,22 @@ private val Typography = Typography(
     labelLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 22.sp,
+        fontSize = 15.sp,
+        lineHeight = 17.sp,
+        letterSpacing = 0.5.sp
+    ),
+    labelMedium = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 17.sp,
+        lineHeight = 19.sp,
         letterSpacing = 0.5.sp
     ),
     bodyLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
-        fontSize = 17.sp,
-        lineHeight = 22.sp,
+        fontSize = 18.sp,
+        lineHeight = 20.sp,
         letterSpacing = 0.5.sp
     )
 )

@@ -1,26 +1,11 @@
 package github.leavesczy.xlog.decode.ui
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,7 +49,7 @@ fun FrameWindowScope.MainPage(
             .fillMaxSize()
             .padding(horizontal = 18.dp, vertical = 18.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(space = 10.dp)
+        verticalArrangement = Arrangement.spacedBy(space = 20.dp)
     ) {
         LogFilePath(
             logPath = pageViewState.logPath,
@@ -83,7 +68,8 @@ fun FrameWindowScope.MainPage(
         )
         Button(
             modifier = Modifier
-                .fillMaxWidth(fraction = 0.3f),
+                .fillMaxWidth(fraction = 0.4f)
+                .height(height = 50.dp),
             onClick = {
                 coroutineScope.launch {
                     val logPath = pageViewState.logPath
@@ -160,7 +146,7 @@ private fun PrivateKey(
         label = {
             Text(
                 modifier = Modifier,
-                text = "如果日志有进行加密则输入私钥，否则无需输入"
+                text = "如果日志有进行加密则需输入私钥"
             )
         },
         onValueChange = onInputPrivateKey

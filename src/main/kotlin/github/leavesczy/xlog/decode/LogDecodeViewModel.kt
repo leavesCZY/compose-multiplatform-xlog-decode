@@ -9,25 +9,16 @@ import androidx.lifecycle.viewModelScope
 import github.leavesczy.xlog.decode.core.DecryptUtils
 import github.leavesczy.xlog.decode.core.LogDecode
 import github.leavesczy.xlog.decode.core.Logger
-import github.leavesczy.xlog.decode.ui.CryptKeyPageViewState
-import github.leavesczy.xlog.decode.ui.DialogState
-import github.leavesczy.xlog.decode.ui.MainPageViewState
-import github.leavesczy.xlog.decode.ui.Page
-import github.leavesczy.xlog.decode.ui.SettingsPageViewState
-import github.leavesczy.xlog.decode.ui.Theme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import github.leavesczy.xlog.decode.ui.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.awt.Desktop
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.file.Path
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 import kotlin.io.path.pathString
 
 /**
@@ -35,8 +26,7 @@ import kotlin.io.path.pathString
  * @Date: 2024/6/4 14:16
  * @Desc:
  */
-class LogDecodeViewModel :
-    ViewModel(viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
+class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
 
     var mainPageViewState by mutableStateOf(
         value = MainPageViewState(
@@ -154,7 +144,7 @@ class LogDecodeViewModel :
     private fun buildOutFile(logFile: File): File {
         val logFileName = logFile.nameWithoutExtension
         val outFileName =
-            logFileName + "_" + SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(Date()) + ".txt"
+            logFileName + "_" + SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(Date()) + ".txt"
         return File(logFile.parentFile, outFileName)
     }
 

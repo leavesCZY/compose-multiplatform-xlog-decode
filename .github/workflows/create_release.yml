@@ -61,7 +61,7 @@ jobs:
       - if: matrix.os == 'windows-latest'
         name: rename File
         run: |
-          mv ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.exe ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-windows-x86_64.exe
+          mv ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.exe ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-windows-x86_64.exe
 
       - if: matrix.os == 'windows-latest'
         name: zip AppImage
@@ -74,18 +74,18 @@ jobs:
       - if: matrix.os == 'ubuntu-latest'
         name: rename File
         run: |
-          mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}-1.x86_64.rpm   /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-linux-x86_64.rpm          
-          mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode_${{env.PACKAGE_VERSION}}_amd64.deb      /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-linux-amd64.deb
+          mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}-1.x86_64.rpm   /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-linux-x86_64.rpm          
+          mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode_${{env.PACKAGE_VERSION}}_amd64.deb      /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode-linux-amd64.deb
 
       - if: matrix.os == 'macos-13'
         name: rename File
         run: |
-          mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-macos-x86_64.dmg
+          mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-macos-x86_64.dmg
 
       - if: matrix.os == 'macos-14'
         name: rename File
         run: |
-          mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-macos-arm64.dmg
+          mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-macos-arm64.dmg
 
       - name: create a release
         uses: ncipollo/release-action@v1

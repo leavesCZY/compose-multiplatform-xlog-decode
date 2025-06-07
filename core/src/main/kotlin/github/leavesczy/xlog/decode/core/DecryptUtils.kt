@@ -9,11 +9,7 @@ import org.bouncycastle.jce.spec.ECPublicKeySpec
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.security.KeyFactory
-import java.security.KeyPairGenerator
-import java.security.PrivateKey
-import java.security.PublicKey
-import java.security.Security
+import java.security.*
 import javax.crypto.KeyAgreement
 
 /**

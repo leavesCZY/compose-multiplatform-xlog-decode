@@ -158,7 +158,7 @@ class LogDecode(private val logger: Logger) {
                             magicStartMark == MagicStartMark.AsyncZstdStart
                         ) {
                             if (privateKey.isBlank()) {
-                                throw IllegalArgumentException("日志有进行加密，需输入私钥")
+                                throw IllegalArgumentException("日志有加密，需输入私钥")
                             }
                             decodeTeaKey(
                                 privateKey = privateKey,

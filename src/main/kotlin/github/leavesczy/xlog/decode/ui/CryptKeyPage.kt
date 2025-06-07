@@ -1,10 +1,6 @@
 package github.leavesczy.xlog.decode.ui
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -26,7 +22,7 @@ fun CryptKeyPage(pageViewState: CryptKeyPageViewState) {
             .fillMaxSize()
             .padding(horizontal = 18.dp, vertical = 18.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(space = 10.dp)
+        verticalArrangement = Arrangement.spacedBy(space = 20.dp)
     ) {
         ReadOnlyTextField(
             modifier = Modifier
@@ -42,7 +38,8 @@ fun CryptKeyPage(pageViewState: CryptKeyPageViewState) {
         )
         Button(
             modifier = Modifier
-                .fillMaxWidth(fraction = 0.3f),
+                .fillMaxWidth(fraction = 0.4f)
+                .height(height = 50.dp),
             onClick = pageViewState.generateKeyPair
         ) {
             Text(
@@ -55,7 +52,7 @@ fun CryptKeyPage(pageViewState: CryptKeyPageViewState) {
 
 @Composable
 private fun ReadOnlyTextField(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     value: String,
     label: String? = null
 ) {
