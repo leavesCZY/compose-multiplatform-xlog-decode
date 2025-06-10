@@ -1,12 +1,7 @@
 package github.leavesczy.xlog.decode.ui
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Key
-import androidx.compose.material.icons.outlined.Loop
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.graphics.vector.ImageVector
 import java.io.File
 import java.nio.file.Path
 
@@ -15,22 +10,10 @@ import java.nio.file.Path
  * @Date: 2024/6/4 14:15
  * @Desc:
  */
-enum class Page(
-    val title: String,
-    val icon: ImageVector
-) {
-    Main(
-        title = "Log",
-        icon = Icons.Outlined.Loop
-    ),
-    CryptKey(
-        title = "密钥",
-        icon = Icons.Outlined.Key
-    ),
-    Settings(
-        title = "设置",
-        icon = Icons.Outlined.Settings
-    )
+enum class Page {
+    Main,
+    SecretKey,
+    Settings
 }
 
 enum class Theme(val type: Int) {
@@ -47,19 +30,19 @@ data class MainPageViewState(
     val logPath: String,
     val runtimeLog: String,
     val logScrollState: ScrollState,
-    val onInputPrivateKey: (String) -> Unit,
+    val onInputPrivateKeyChange: (String) -> Unit,
     val openFileDialog: suspend () -> Unit,
-    val onInputLogFilePath: (Path) -> Unit,
+    val onInputLogFilePathChange: (Path) -> Unit,
     val decodeLog: suspend () -> File?,
     val openFile: suspend (File) -> Unit,
     val switchPage: (Page) -> Unit
 )
 
 @Stable
-data class CryptKeyPageViewState(
+data class SecretKeyPageViewState(
     val privateKey: String,
     val publicKey: String,
-    val generateKeyPair: () -> Unit
+    val generateTheKeyPair: () -> Unit
 )
 
 @Stable

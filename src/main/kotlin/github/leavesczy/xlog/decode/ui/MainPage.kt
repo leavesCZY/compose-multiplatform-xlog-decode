@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
@@ -19,7 +17,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.FrameWindowScope
+import compose_multiplatform_xlog_decode.generated.resources.*
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 import java.io.File
 import java.net.URI
 import java.nio.file.Path
@@ -31,13 +32,6 @@ import kotlin.io.path.toPath
  * @Date: 2024/6/4 14:15
  * @Desc:
  */
-private const val xLogFileExtension = "xlog"
-
-private fun Path.isXLogFile(): Boolean {
-    val file = File(pathString)
-    return file.exists() && file.isFile && file.extension == xLogFileExtension
-}
-
 @Composable
 fun FrameWindowScope.MainPage(
     pageViewState: MainPageViewState,
@@ -47,14 +41,14 @@ fun FrameWindowScope.MainPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 18.dp, vertical = 18.dp),
+            .padding(start = 18.dp, top = 14.dp, end = 18.dp, bottom = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(space = 20.dp)
+        verticalArrangement = Arrangement.spacedBy(space = 18.dp)
     ) {
         LogFilePath(
             logPath = pageViewState.logPath,
             confirmLogFilePath = {
-                pageViewState.onInputLogFilePath(it)
+                pageViewState.onInputLogFilePathChange(it)
             },
             openFileDialog = {
                 coroutineScope.launch {
@@ -64,26 +58,26 @@ fun FrameWindowScope.MainPage(
         )
         PrivateKey(
             privateKey = pageViewState.privateKey,
-            onInputPrivateKey = pageViewState.onInputPrivateKey
+            onInputPrivateKeyChange = pageViewState.onInputPrivateKeyChange
         )
         Button(
             modifier = Modifier
                 .fillMaxWidth(fraction = 0.4f)
-                .height(height = 50.dp),
+                .height(height = 45.dp),
             onClick = {
                 coroutineScope.launch {
                     val logPath = pageViewState.logPath
                     if (logPath.isBlank()) {
                         snackBarHostState.showSnackbar(
-                            message = "请先选择日志文件",
+                            message = getString(resource = Res.string.please_select_the_log_file_first),
                             duration = SnackbarDuration.Short
                         )
                     } else {
                         val outFile = pageViewState.decodeLog()
                         if (outFile != null) {
                             val result = snackBarHostState.showSnackbar(
-                                message = "解析成功，文件路径：" + outFile.absolutePath,
-                                actionLabel = "打开文件",
+                                message = getString(resource = Res.string.parsing_successful),
+                                actionLabel = getString(resource = Res.string.open_the_file),
                                 withDismissAction = true,
                                 duration = SnackbarDuration.Short
                             )
@@ -103,7 +97,7 @@ fun FrameWindowScope.MainPage(
         ) {
             Text(
                 modifier = Modifier,
-                text = "解析日志"
+                text = stringResource(resource = Res.string.parse_the_file)
             )
         }
         RuntimeLog(
@@ -111,45 +105,27 @@ fun FrameWindowScope.MainPage(
             scrollState = pageViewState.logScrollState
         )
     }
-    if (pageViewState.openDialog.isAwaiting) {
-        val fileExtension = xLogFileExtension
-        FileDialog(
-            title = "请选择 $fileExtension 文件",
-            isMultipleMode = false,
-            fileExtension = fileExtension,
-            onResult = {
-                if (it != null) {
-                    if (it.isXLogFile()) {
-                        pageViewState.onInputLogFilePath(it)
-                    } else {
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(message = "请选择 $fileExtension 文件")
-                        }
+    val fileDialogIsAwaiting by remember {
+        derivedStateOf {
+            pageViewState.openDialog.onResult != null
+        }
+    }
+    FileDialog(
+        visible = fileDialogIsAwaiting,
+        title = stringResource(resource = Res.string.please_select_the_xlog_file),
+        fileExtension = xLogFileExtension,
+        onResult = {
+            if (it != null) {
+                if (it.isXLogFile()) {
+                    pageViewState.onInputLogFilePathChange(it)
+                } else {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(message = getString(resource = Res.string.please_select_the_xlog_file))
                     }
                 }
-                pageViewState.openDialog.onResult(result = it)
             }
-        )
-    }
-}
-
-@Composable
-private fun PrivateKey(
-    privateKey: String,
-    onInputPrivateKey: (String) -> Unit
-) {
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth(),
-        value = privateKey,
-        shape = RoundedCornerShape(size = 16.dp),
-        label = {
-            Text(
-                modifier = Modifier,
-                text = "如果日志有进行加密则需输入私钥"
-            )
-        },
-        onValueChange = onInputPrivateKey
+            pageViewState.openDialog.onResult(result = it)
+        }
     )
 }
 
@@ -200,11 +176,12 @@ private fun LogFilePath(
                 ),
             value = logPath,
             readOnly = true,
-            shape = RoundedCornerShape(size = 16.dp),
+            shape = RoundedCornerShape(size = 18.dp),
             label = {
                 Text(
                     modifier = Modifier,
-                    text = "点击选择日志文件，或者拖动日志文件到此处"
+                    text = stringResource(resource = Res.string.click_to_select_the_log_file_or_drag_the_log_file_here),
+                    maxLines = 1
                 )
             },
             onValueChange = {}
@@ -212,10 +189,30 @@ private fun LogFilePath(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .clip(shape = RoundedCornerShape(size = 16.dp))
+                .clip(shape = RoundedCornerShape(size = 18.dp))
                 .clickable(onClick = openFileDialog)
         )
     }
+}
+
+@Composable
+private fun PrivateKey(
+    privateKey: String,
+    onInputPrivateKeyChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth(),
+        value = privateKey,
+        shape = RoundedCornerShape(size = 18.dp),
+        label = {
+            Text(
+                modifier = Modifier,
+                text = stringResource(resource = Res.string.if_the_log_is_encrypted_the_private_key_needs_to_be_entered)
+            )
+        },
+        onValueChange = onInputPrivateKeyChange
+    )
 }
 
 @Composable
@@ -250,4 +247,11 @@ private fun RuntimeLog(
             adapter = rememberScrollbarAdapter(scrollState = scrollState)
         )
     }
+}
+
+private const val xLogFileExtension = "xlog"
+
+private fun Path.isXLogFile(): Boolean {
+    val file = File(pathString)
+    return file.exists() && file.isFile && file.extension == xLogFileExtension
 }

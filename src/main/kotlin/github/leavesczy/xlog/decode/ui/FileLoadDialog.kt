@@ -13,11 +13,13 @@ import java.nio.file.Path
 
 @Composable
 fun FrameWindowScope.FileDialog(
-    title: String = "Choose a file",
-    isMultipleMode: Boolean,
+    visible: Boolean,
+    title: String,
+    isMultipleMode: Boolean = false,
     fileExtension: String?,
     onResult: (result: Path?) -> Unit
 ) = AwtWindow(
+    visible = visible,
     create = {
         object : FileDialog(window, title, LOAD) {
             override fun setVisible(value: Boolean) {
@@ -43,12 +45,15 @@ fun FrameWindowScope.FileDialog(
             }
         }
     },
-    dispose = FileDialog::dispose
+    dispose = {
+        it.dispose()
+    }
 )
 
 class DialogState<T> {
 
-    private var onResult: CompletableDeferred<T>? by mutableStateOf(null)
+    var onResult: CompletableDeferred<T>? by mutableStateOf(value = null)
+        private set
 
     val isAwaiting get() = onResult != null
 
@@ -59,6 +64,8 @@ class DialogState<T> {
         return result
     }
 
-    fun onResult(result: T) = onResult!!.complete(result)
+    fun onResult(result: T) {
+        onResult!!.complete(result)
+    }
 
 }

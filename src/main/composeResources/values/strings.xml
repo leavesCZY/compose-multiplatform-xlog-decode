@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">compose-multiplatform-xlog-decode</string>
+    <string name="log">Log</string>
+    <string name="secret_key">密钥</string>
+    <string name="settings">设置</string>
+    <string name="click_to_select_the_log_file_or_drag_the_log_file_here">点击选择日志文件，或者拖动日志文件到此处
+    </string>
+    <string name="if_the_log_is_encrypted_the_private_key_needs_to_be_entered">如果日志有进行加密，则需输入私钥</string>
+    <string name="parse_the_file">解析日志</string>
+    <string name="please_select_the_xlog_file">请选择 xlog 文件</string>
+    <string name="please_select_the_log_file_first">请先选择日志文件</string>
+    <string name="parsing_successful">解析成功</string>
+    <string name="parsing_successful_file_path">解析成功，文件路径：%1$s</string>
+    <string name="open_the_file">打开文件</string>
+    <string name="private_key">私钥</string>
+    <string name="public_key">公钥</string>
+    <string name="generate_the_key_pair">生成密钥</string>
+    <string name="theme">主题</string>
+    <string name="the_file_will_be_automatically_opened_after_successful_parsing">解析成功后自动打开文件</string>
+</resources>

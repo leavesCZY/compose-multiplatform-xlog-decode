@@ -10,6 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import compose_multiplatform_xlog_decode.generated.resources.Res
+import compose_multiplatform_xlog_decode.generated.resources.the_file_will_be_automatically_opened_after_successful_parsing
+import compose_multiplatform_xlog_decode.generated.resources.theme
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * @Author: leavesCZY
@@ -38,7 +42,7 @@ fun SettingsPage(pageViewState: SettingsPageViewState) {
         ) {
             Text(
                 modifier = Modifier,
-                text = "主题"
+                text = stringResource(resource = Res.string.theme)
             )
             SingleChoiceSegmentedButtonRow(
                 modifier = Modifier,
@@ -73,12 +77,11 @@ fun SettingsPage(pageViewState: SettingsPageViewState) {
         ) {
             Text(
                 modifier = Modifier,
-                text = "解析成功后自动打开文件"
+                text = stringResource(resource = Res.string.the_file_will_be_automatically_opened_after_successful_parsing)
             )
-            val checked = pageViewState.autoOpenFileWhenParsingIsSuccessful
             Switch(
                 modifier = Modifier,
-                checked = checked,
+                checked = pageViewState.autoOpenFileWhenParsingIsSuccessful,
                 onCheckedChange = pageViewState.updateAutoOpenFileWhenParsingIsSuccessful
             )
         }

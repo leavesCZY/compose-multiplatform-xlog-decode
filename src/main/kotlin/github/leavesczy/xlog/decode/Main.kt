@@ -1,23 +1,29 @@
 package github.leavesczy.xlog.decode
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Key
+import androidx.compose.material.icons.outlined.Loop
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import androidx.lifecycle.viewmodel.compose.viewModel
-import compose_multiplatform_xlog_decode.generated.resources.Res
-import compose_multiplatform_xlog_decode.generated.resources.application_icon
-import github.leavesczy.xlog.decode.ui.CryptKeyPage
+import compose_multiplatform_xlog_decode.generated.resources.*
 import github.leavesczy.xlog.decode.ui.MainPage
 import github.leavesczy.xlog.decode.ui.Page
+import github.leavesczy.xlog.decode.ui.SecretKeyPage
 import github.leavesczy.xlog.decode.ui.SettingsPage
 import github.leavesczy.xlog.decode.ui.theme.AppTheme
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import java.awt.Toolkit
 
 /**
@@ -27,7 +33,7 @@ import java.awt.Toolkit
  */
 fun main() = application {
     Window(
-        title = "compose-multiplatform-xlog-decode",
+        title = stringResource(resource = Res.string.app_name),
         resizable = true,
         icon = painterResource(Res.drawable.application_icon),
         state = rememberWindowState(
@@ -80,6 +86,24 @@ private fun FrameWindowScope.Main() {
                         )
                     ) {
                         for (page in Page.entries) {
+                            val icon: ImageVector
+                            val title: StringResource
+                            when (page) {
+                                Page.Main -> {
+                                    icon = Icons.Outlined.Loop
+                                    title = Res.string.log
+                                }
+
+                                Page.SecretKey -> {
+                                    icon = Icons.Outlined.Key
+                                    title = Res.string.secret_key
+                                }
+
+                                Page.Settings -> {
+                                    icon = Icons.Outlined.Settings
+                                    title = Res.string.settings
+                                }
+                            }
                             NavigationRailItem(
                                 modifier = Modifier,
                                 selected = logDecodeViewModel.mainPageViewState.page == page,
@@ -87,15 +111,15 @@ private fun FrameWindowScope.Main() {
                                 label = {
                                     Text(
                                         modifier = Modifier,
-                                        text = page.title
+                                        text = stringResource(resource = title)
                                     )
                                 },
                                 icon = {
                                     Icon(
                                         modifier = Modifier
                                             .size(size = 22.dp),
-                                        imageVector = page.icon,
-                                        contentDescription = page.title
+                                        imageVector = icon,
+                                        contentDescription = stringResource(resource = title)
                                     )
                                 },
                                 onClick = {
@@ -113,8 +137,8 @@ private fun FrameWindowScope.Main() {
                         )
                     }
 
-                    Page.CryptKey -> {
-                        CryptKeyPage(pageViewState = logDecodeViewModel.cryptKeyPageViewState)
+                    Page.SecretKey -> {
+                        SecretKeyPage(pageViewState = logDecodeViewModel.secretKeyPageViewState)
                     }
 
                     Page.Settings -> {
