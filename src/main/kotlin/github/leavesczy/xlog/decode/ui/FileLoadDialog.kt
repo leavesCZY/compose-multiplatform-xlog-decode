@@ -11,15 +11,19 @@ import java.awt.FileDialog
 import java.io.File
 import java.nio.file.Path
 
+/**
+ * @Author: leavesCZY
+ * @Date: 2025/6/10 15:36
+ * @Desc:
+ */
 @Composable
 fun FrameWindowScope.FileDialog(
-    visible: Boolean,
     title: String,
     isMultipleMode: Boolean = false,
     fileExtension: String?,
     onResult: (result: Path?) -> Unit
 ) = AwtWindow(
-    visible = visible,
+    visible = true,
     create = {
         object : FileDialog(window, title, LOAD) {
             override fun setVisible(value: Boolean) {
@@ -54,8 +58,6 @@ class DialogState<T> {
 
     var onResult: CompletableDeferred<T>? by mutableStateOf(value = null)
         private set
-
-    val isAwaiting get() = onResult != null
 
     suspend fun awaitResult(): T {
         onResult = CompletableDeferred()

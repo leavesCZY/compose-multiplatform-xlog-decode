@@ -69,7 +69,7 @@ jobs:
         with:
           type: "zip"
           directory: "./build/compose/binaries/main-release/app/compose-multiplatform-xlog-decode"
-          filename: "compose-multiplatform-xlog-decode-${{env.V_PACKAGE_VERSION}}-windows-x86_64.zip"
+          filename: "compose-multiplatform-xlog-decode-windows-x86_64.zip"
 
       - if: matrix.os == 'ubuntu-latest'
         name: rename File

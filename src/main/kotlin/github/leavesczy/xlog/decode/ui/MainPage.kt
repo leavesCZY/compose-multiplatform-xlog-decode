@@ -110,23 +110,24 @@ fun FrameWindowScope.MainPage(
             pageViewState.openDialog.onResult != null
         }
     }
-    FileDialog(
-        visible = fileDialogIsAwaiting,
-        title = stringResource(resource = Res.string.please_select_the_xlog_file),
-        fileExtension = xLogFileExtension,
-        onResult = {
-            if (it != null) {
-                if (it.isXLogFile()) {
-                    pageViewState.onInputLogFilePathChange(it)
-                } else {
-                    coroutineScope.launch {
-                        snackBarHostState.showSnackbar(message = getString(resource = Res.string.please_select_the_xlog_file))
+    if (fileDialogIsAwaiting) {
+        FileDialog(
+            title = stringResource(resource = Res.string.please_select_the_xlog_file),
+            fileExtension = xLogFileExtension,
+            onResult = {
+                if (it != null) {
+                    if (it.isXLogFile()) {
+                        pageViewState.onInputLogFilePathChange(it)
+                    } else {
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(message = getString(resource = Res.string.please_select_the_xlog_file))
+                        }
                     }
                 }
+                pageViewState.openDialog.onResult(result = it)
             }
-            pageViewState.openDialog.onResult(result = it)
-        }
-    )
+        )
+    }
 }
 
 @Composable

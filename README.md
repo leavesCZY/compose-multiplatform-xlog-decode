@@ -1,6 +1,6 @@
 # compose-multiplatform-xlog-decode
 
-一个跨平台的 xlog 日志解析工具，支持 Windows、MacOS、Linux 等多个系统，包含两个功能点：
+一个跨平台的 xlog 日志解析工具，支持 Windows、MacOS、Linux，包含两个功能点：
 
 - 解压和解密 xlog 日志文件
 - 生成加密 xlog 日志文件所需要的公钥和私钥
