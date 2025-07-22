@@ -1,11 +1,11 @@
 [versions]
-jetbrains-kotlin = "2.1.21"
-jetbrains-compose = "1.8.1"
+jetbrains-kotlin = "2.2.0"
+jetbrains-compose = "1.8.2"
 
 androidx-datastore = "1.1.7"
-jetbrains-lifecycle-viewmodel-compose = "2.9.0"
-luben-zstd-jni = "1.5.7-3"
-bouncycastle-bcprov-jdk18on = "1.80"
+jetbrains-lifecycle-viewmodel-compose = "2.9.1"
+luben-zstd-jni = "1.5.7-4"
+bouncycastle-bcprov-jdk18on = "1.81"
 
 [plugins]
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrains-kotlin" }
