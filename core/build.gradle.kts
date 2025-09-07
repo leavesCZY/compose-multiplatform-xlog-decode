@@ -5,9 +5,9 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(18)
+    jvmToolchain(21)
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_18)
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 

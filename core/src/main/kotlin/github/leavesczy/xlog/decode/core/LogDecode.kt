@@ -87,7 +87,7 @@ class LogDecode(private val logger: Logger) {
                 )
                 if (logSpace == null) {
                     logger.debug {
-                        "finish!!!"
+                        "finish"
                     }
                     logger.debug {
                         "-----------------------------------------------------------------------"
@@ -128,7 +128,7 @@ class LogDecode(private val logger: Logger) {
 
     private fun decodeLogSpace(privateKey: String, buffer: ByteArray, offset: Int): LogSpace? {
         val bufferSize = buffer.size
-        if (offset < 0 || offset >= bufferSize) {
+        if (offset !in 0..<bufferSize) {
             return null
         }
         for (index in offset..<bufferSize) {

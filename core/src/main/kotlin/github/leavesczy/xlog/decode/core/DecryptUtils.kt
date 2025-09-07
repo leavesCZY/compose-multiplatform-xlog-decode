@@ -23,7 +23,10 @@ object DecryptUtils {
         Security.addProvider(BouncyCastleProvider())
     }
 
-    data class SecretKey(val privateKey: String, val publicKey: String)
+    data class SecretKey(
+        val privateKey: String,
+        val publicKey: String
+    )
 
     fun generateKeyPair(): SecretKey {
         val curveParameterSpec = ECNamedCurveTable.getParameterSpec("secp256k1")

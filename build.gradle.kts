@@ -8,9 +8,9 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(18)
+    jvmToolchain(21)
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_18)
+        jvmTarget.set(JvmTarget.JVM_21)
         optIn.set(
             setOf(
                 "androidx.compose.ui.ExperimentalComposeUiApi",
@@ -47,10 +47,10 @@ dependencies {
     implementation(libs.jetbrains.lifecycle.viewmodel.compose)
 }
 
-enum class OS() {
-    Linux(),
-    Windows(),
-    MacOS()
+enum class OS {
+    Linux,
+    Windows,
+    MacOS
 }
 
 val currentOS: OS by lazy {

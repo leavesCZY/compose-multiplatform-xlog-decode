@@ -1,9 +1,9 @@
 [versions]
-jetbrains-kotlin = "2.2.0"
-jetbrains-compose = "1.8.2"
+jetbrains-kotlin = "2.2.10"
+jetbrains-compose = "1.9.0-rc01"
 
 androidx-datastore = "1.1.7"
-jetbrains-lifecycle-viewmodel-compose = "2.9.1"
+jetbrains-lifecycle-viewmodel-compose = "2.9.3"
 luben-zstd-jni = "1.5.7-4"
 bouncycastle-bcprov-jdk18on = "1.81"
 
