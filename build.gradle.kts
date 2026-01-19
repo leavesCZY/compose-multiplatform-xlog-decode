@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.jetbrains.kotlin.jvm)
-    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.jetbrains.compose.multiplatform)
     alias(libs.plugins.jetbrains.compose.compiler)
 }
 
@@ -40,17 +40,17 @@ tasks {
 dependencies {
     implementation(project(":core"))
     implementation(compose.desktop.currentOs)
-    implementation(compose.material3)
-    implementation(compose.materialIconsExtended)
-    implementation(compose.components.resources)
-    implementation(libs.androidx.datastore.preferences.core)
+    implementation(libs.jetbrains.compose.material3)
+    implementation(libs.jetbrains.compose.components.resources)
+    implementation(libs.jetbrains.compose.material.icons.extended)
     implementation(libs.jetbrains.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.datastore.preferences.core)
 }
 
 enum class OS {
     Linux,
     Windows,
-    MacOS
+    MacOS;
 }
 
 val currentOS: OS by lazy {

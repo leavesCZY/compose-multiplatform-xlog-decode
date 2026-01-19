@@ -1,19 +1,26 @@
 [versions]
-jetbrains-kotlin = "2.2.20"
-jetbrains-compose = "1.9.0"
+jetbrains-kotlin = "2.3.0"
+jetbrains-compose-multiplatform = "1.10.0"
 
-androidx-datastore = "1.1.7"
-jetbrains-lifecycle-viewmodel-compose = "2.9.4"
-luben-zstd-jni = "1.5.7-4"
-bouncycastle-bcprov-jdk18on = "1.82"
+jetbrains-compose-material3 = "1.9.0"
+jetbrains-compose-material-icons-extended = "1.7.3"
+jetbrains-lifecycle-viewmodel-compose = "2.9.6"
+
+androidx-datastore = "1.2.0"
+luben-zstd-jni = "1.5.7-6"
+bouncycastle-bcprov-jdk18on = "1.83"
 
 [plugins]
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrains-kotlin" }
 jetbrains-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "jetbrains-kotlin" }
-jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
+jetbrains-compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose-multiplatform" }
 
 [libraries]
-androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
+jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "jetbrains-compose-material3" }
+jetbrains-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "jetbrains-compose-multiplatform" }
+jetbrains-compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "jetbrains-compose-material-icons-extended" }
 jetbrains-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle-viewmodel-compose" }
+
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
 luben-zstd-jni = { module = "com.github.luben:zstd-jni", version.ref = "luben-zstd-jni" }
 bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle-bcprov-jdk18on" }

@@ -27,30 +27,20 @@ jobs:
   create-release-distribution:
     strategy:
       matrix:
-        os: [ windows-latest , ubuntu-latest , macos-13 , macos-14 ]
+        os: [ windows-latest , ubuntu-latest , macos-15-intel , macos-latest ]
     runs-on: ${{ matrix.os }}
     name: create release distribution
     needs: current-time
 
     steps:
-      - if: matrix.os == 'macos-14'
-        name: setup jdk
+      - name: setup jdk
         uses: actions/setup-java@v5
         with:
-          distribution: "zulu"
           java-version: "21"
-          architecture: x64
-
-      - if: matrix.os != 'macos-14'
-        name: setup jdk
-        uses: actions/setup-java@v5
-        with:
           distribution: "zulu"
-          java-version: "21"
-          architecture: x64
 
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: grant execute permission for gradlew
         run: chmod +x gradlew
@@ -77,12 +67,12 @@ jobs:
           mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}-1.x86_64.rpm   /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-linux-x86_64.rpm          
           mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode_${{env.PACKAGE_VERSION}}_amd64.deb      /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode-linux-amd64.deb
 
-      - if: matrix.os == 'macos-13'
+      - if: matrix.os == 'macos-15-intel'
         name: rename file
         run: |
           mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-macos-x86_64.dmg
 
-      - if: matrix.os == 'macos-14'
+      - if: matrix.os == 'macos-latest'
         name: rename file
         run: |
           mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-macos-arm64.dmg
