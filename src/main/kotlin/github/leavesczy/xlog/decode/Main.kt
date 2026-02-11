@@ -151,9 +151,9 @@ private fun FrameWindowScope.Main() {
 }
 
 private fun preferredWindowSize(): DpSize {
-    val aspectRatio = 1.60f
+    val aspectRatio = 1.72f
     val screenSize = Toolkit.getDefaultToolkit().screenSize
-    val preferredHeight = screenSize.height * 0.55f
-    val preferredWidth = minOf(screenSize.width * 0.60f, preferredHeight * aspectRatio)
-    return DpSize(preferredWidth.dp, preferredHeight.dp)
+    val preferredHeight = screenSize.height * 0.60f
+    val preferredWidth = minOf(a = screenSize.width * 0.70f, b = preferredHeight * aspectRatio)
+    return DpSize(width = preferredWidth.dp, height = preferredHeight.dp)
 }

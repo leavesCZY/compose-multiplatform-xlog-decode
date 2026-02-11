@@ -1,4 +1,4 @@
-name: create release
+name: Build & Release
 
 on:
   push:
@@ -6,85 +6,97 @@ on:
     paths:
       - "**/workflows-trigger.properties"
 
-env:
-  PACKAGE_VERSION: 1.0.0
-  V_PACKAGE_VERSION: v1.0.0
+permissions:
+  contents: write
 
 jobs:
-
-  current-time:
+  get-time:
     runs-on: ubuntu-latest
-    name: get current time
     outputs:
-      currentTime: ${{steps.currentTime.outputs.formattedTime}}
+      release_tag: ${{ steps.time.outputs.formattedTime }}
     steps:
-      - id: currentTime
+      - id: time
         uses: josStorer/get-current-time@v2
         with:
           format: YYYY.MM.DD
           utcOffset: "+08:00"
 
-  create-release-distribution:
+  build-and-package:
+    needs: get-time
     strategy:
       matrix:
-        os: [ windows-latest , ubuntu-latest , macos-15-intel , macos-latest ]
+        include:
+          - os: windows-latest
+            platform: windows-x86_64
+          - os: ubuntu-latest
+            platform: linux-x86_64
+          - os: macos-15-intel
+            platform: macos-x86_64
+          - os: macos-latest
+            platform: macos-arm64
     runs-on: ${{ matrix.os }}
-    name: create release distribution
-    needs: current-time
+    name: Build ${{ matrix.platform }}
 
     steps:
-      - name: setup jdk
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup JDK 21
         uses: actions/setup-java@v5
         with:
           java-version: "21"
           distribution: "zulu"
 
-      - name: checkout
-        uses: actions/checkout@v6
-
-      - name: grant execute permission for gradlew
+      - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: packageReleaseDistributionForCurrentOS
+      - name: Package Release Distribution
         run: ./gradlew packageReleaseDistributionForCurrentOS
 
-      - if: matrix.os == 'windows-latest'
-        name: rename file
+      - name: Rename and Prepare Artifacts
+        shell: bash
         run: |
-          mv ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.exe ./build/compose/binaries/main-release/exe/compose-multiplatform-xlog-decode-windows-x86_64.exe
+          OUT_DIR="build/compose/binaries/main-release"
+          mkdir -p ./ready-to-upload
+          
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            mv $OUT_DIR/exe/*.exe ./ready-to-upload/compose-multiplatform-xlog-decode-${{ matrix.platform }}.exe
+            7z a -tzip ./ready-to-upload/compose-multiplatform-xlog-decode-${{ matrix.platform }}.zip ./$OUT_DIR/app/*
+          
+          elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            mv $OUT_DIR/rpm/*.rpm ./ready-to-upload/compose-multiplatform-xlog-decode-${{ matrix.platform }}.rpm
+            mv $OUT_DIR/deb/*.deb ./ready-to-upload/compose-multiplatform-xlog-decode-${{ matrix.platform }}.deb
+          
+          else # macOS
+            mv $OUT_DIR/dmg/*.dmg ./ready-to-upload/compose-multiplatform-xlog-decode-${{ matrix.platform }}.dmg
+          fi
 
-      - if: matrix.os == 'windows-latest'
-        name: zip AppImage
-        uses: thedoctor0/zip-release@0.7.6
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v6
         with:
-          type: "zip"
-          directory: "./build/compose/binaries/main-release/app/compose-multiplatform-xlog-decode"
-          filename: "compose-multiplatform-xlog-decode-windows-x86_64.zip"
+          name: artifacts-${{ matrix.platform }}
+          path: ./ready-to-upload/*
+          retention-days: 1
 
-      - if: matrix.os == 'ubuntu-latest'
-        name: rename file
-        run: |
-          mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}-1.x86_64.rpm   /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/rpm/compose-multiplatform-xlog-decode-linux-x86_64.rpm          
-          mv /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode_${{env.PACKAGE_VERSION}}_amd64.deb      /home/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/deb/compose-multiplatform-xlog-decode-linux-amd64.deb
+  release:
+    needs: [ get-time, build-and-package ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: ./release-artifacts
+          pattern: artifacts-*
+          merge-multiple: true
 
-      - if: matrix.os == 'macos-15-intel'
-        name: rename file
-        run: |
-          mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-macos-x86_64.dmg
-
-      - if: matrix.os == 'macos-latest'
-        name: rename file
-        run: |
-          mv /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-${{env.PACKAGE_VERSION}}.dmg /Users/runner/work/compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode/build/compose/binaries/main-release/dmg/compose-multiplatform-xlog-decode-macos-arm64.dmg
-
-      - name: create a release
+      - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           generateReleaseNotes: false
-          artifactErrorsFailBuild: false
-          body: "create by workflows"
-          artifacts: "**/exe/*.exe,**/app/compose-multiplatform-xlog-decode/*.zip,**/deb/*.deb,**/rpm/*.rpm,**/dmg/*.dmg"
-          tag: ${{needs.current-time.outputs.currentTime}}
-          name: ${{needs.current-time.outputs.currentTime}}
-          token: ${{secrets.ACTION_TOKEN}}
+          artifactErrorsFailBuild: true
+          body: "Auto-generated multi-platform release."
+          artifacts: "./release-artifacts/*"
+          tag: ${{ needs.get-time.outputs.release_tag }}
+          name: ${{ needs.get-time.outputs.release_tag }}
+          token: ${{ secrets.GITHUB_TOKEN }}

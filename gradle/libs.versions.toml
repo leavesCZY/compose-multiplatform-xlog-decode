@@ -1,13 +1,13 @@
 [versions]
-jetbrains-kotlin = "2.3.0"
-jetbrains-compose-multiplatform = "1.10.0"
+jetbrains-kotlin = "2.3.10"
+jetbrains-compose-multiplatform = "1.10.1"
 
 jetbrains-compose-material3 = "1.9.0"
 jetbrains-compose-material-icons-extended = "1.7.3"
 jetbrains-lifecycle-viewmodel-compose = "2.9.6"
 
 androidx-datastore = "1.2.0"
-luben-zstd-jni = "1.5.7-6"
+luben-zstd-jni = "1.5.7-7"
 bouncycastle-bcprov-jdk18on = "1.83"
 
 [plugins]
