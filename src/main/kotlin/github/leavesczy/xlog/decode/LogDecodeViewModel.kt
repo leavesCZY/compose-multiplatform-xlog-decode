@@ -11,9 +11,18 @@ import compose_multiplatform_xlog_decode.generated.resources.parsing_successful_
 import github.leavesczy.xlog.decode.core.DecryptUtils
 import github.leavesczy.xlog.decode.core.LogDecode
 import github.leavesczy.xlog.decode.core.Logger
-import github.leavesczy.xlog.decode.ui.*
-import kotlinx.coroutines.*
+import github.leavesczy.xlog.decode.ui.DialogState
+import github.leavesczy.xlog.decode.ui.MainPageViewState
+import github.leavesczy.xlog.decode.ui.Page
+import github.leavesczy.xlog.decode.ui.SecretKeyPageViewState
+import github.leavesczy.xlog.decode.ui.SettingsPageViewState
+import github.leavesczy.xlog.decode.ui.Theme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.getString
 import java.awt.Desktop
 import java.io.File
@@ -21,7 +30,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.file.Path
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import kotlin.io.path.pathString
 
 /**
@@ -29,7 +38,8 @@ import kotlin.io.path.pathString
  * @Date: 2024/6/4 14:16
  * @Desc:
  */
-class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
+class LogDecodeViewModel :
+    ViewModel(viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
 
     var mainPageViewState by mutableStateOf(
         value = MainPageViewState(
@@ -88,7 +98,8 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
         val privateKey = DataStoreManager.privateKeyFlow().first()
         val themeType = DataStoreManager.themeFlow().first()
         val theme = Theme.entries.find { it.type == themeType } ?: settingsPageViewState.theme
-        val autOpenFileWhenParsingIsSuccessful = DataStoreManager.autoOpenFileWhenParsingIsSuccessful().first()
+        val autOpenFileWhenParsingIsSuccessful =
+            DataStoreManager.autoOpenFileWhenParsingIsSuccessful().first()
         mainPageViewState = mainPageViewState.copy(privateKey = privateKey)
         settingsPageViewState = settingsPageViewState.copy(
             theme = theme,
@@ -122,7 +133,10 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
                     logFile = logFile,
                     outFile = outFile
                 )
-                val filePathLog = getString(resource = Res.string.parsing_successful_file_path, outFile.absolutePath)
+                val filePathLog = getString(
+                    resource = Res.string.parsing_successful_file_path,
+                    outFile.absolutePath
+                )
                 appendLog {
                     filePathLog
                 }
@@ -197,7 +211,8 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
 
     private fun updateAutoOpenFileWhenParsingIsSuccessful(autoOpen: Boolean) {
         viewModelScope.launch {
-            settingsPageViewState = settingsPageViewState.copy(autoOpenFileWhenParsingIsSuccessful = autoOpen)
+            settingsPageViewState =
+                settingsPageViewState.copy(autoOpenFileWhenParsingIsSuccessful = autoOpen)
             DataStoreManager.autoOpenFileWhenParsingIsSuccessful(autoOpen = autoOpen)
         }
     }

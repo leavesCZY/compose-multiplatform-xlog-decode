@@ -1,11 +1,24 @@
 package github.leavesczy.xlog.decode
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Key
 import androidx.compose.material.icons.outlined.Loop
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -13,9 +26,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
+import androidx.compose.ui.window.FrameWindowScope
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import androidx.lifecycle.viewmodel.compose.viewModel
-import compose_multiplatform_xlog_decode.generated.resources.*
+import compose_multiplatform_xlog_decode.generated.resources.Res
+import compose_multiplatform_xlog_decode.generated.resources.app_name
+import compose_multiplatform_xlog_decode.generated.resources.application_icon
+import compose_multiplatform_xlog_decode.generated.resources.log
+import compose_multiplatform_xlog_decode.generated.resources.secret_key
+import compose_multiplatform_xlog_decode.generated.resources.settings
 import github.leavesczy.xlog.decode.ui.MainPage
 import github.leavesczy.xlog.decode.ui.Page
 import github.leavesczy.xlog.decode.ui.SecretKeyPage
@@ -151,9 +173,9 @@ private fun FrameWindowScope.Main() {
 }
 
 private fun preferredWindowSize(): DpSize {
-    val aspectRatio = 1.60f
+    val aspectRatio = 1.72f
     val screenSize = Toolkit.getDefaultToolkit().screenSize
-    val preferredHeight = screenSize.height * 0.55f
-    val preferredWidth = minOf(screenSize.width * 0.60f, preferredHeight * aspectRatio)
-    return DpSize(preferredWidth.dp, preferredHeight.dp)
+    val preferredHeight = screenSize.height * 0.60f
+    val preferredWidth = minOf(a = screenSize.width * 0.70f, b = preferredHeight * aspectRatio)
+    return DpSize(width = preferredWidth.dp, height = preferredHeight.dp)
 }
