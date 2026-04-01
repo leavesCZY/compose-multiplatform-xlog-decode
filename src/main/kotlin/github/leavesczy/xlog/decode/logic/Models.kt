@@ -1,9 +1,8 @@
-package github.leavesczy.xlog.decode.ui
+package github.leavesczy.xlog.decode.logic
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Stable
 import java.io.File
-import java.nio.file.Path
 
 /**
  * @Author: leavesCZY
@@ -11,31 +10,33 @@ import java.nio.file.Path
  * @Desc:
  */
 enum class Page {
-    Main,
+    Decryption,
     SecretKey,
-    Settings
+    Settings;
 }
 
 enum class Theme(val type: Int) {
     System(type = 0),
     Light(type = 1),
-    Dark(type = 2)
+    Dark(type = 2);
 }
 
 @Stable
 data class MainPageViewState(
     val page: Page,
+    val switchPage: (Page) -> Unit
+)
+
+@Stable
+data class DecryptionPageViewState(
     val privateKey: String,
-    val openDialog: DialogState<Path?>,
-    val logPath: String,
+    val selectedLogFiles: List<String>,
     val runtimeLog: String,
     val logScrollState: ScrollState,
-    val onInputPrivateKeyChange: (String) -> Unit,
-    val openFileDialog: suspend () -> Unit,
-    val onInputLogFilePathChange: (Path) -> Unit,
-    val decodeLog: suspend () -> File?,
-    val openFile: suspend (File) -> Unit,
-    val switchPage: (Page) -> Unit
+    val onInputPrivateKey: (String) -> Unit,
+    val onLogFileIsSelected: (List<String>) -> Unit,
+    val decodeLog: suspend () -> List<File>?,
+    val openFile: suspend (File) -> Unit
 )
 
 @Stable

@@ -6,7 +6,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import github.leavesczy.xlog.decode.ui.Theme
+import github.leavesczy.xlog.decode.logic.Theme
 
 private val Typography = Typography()
 

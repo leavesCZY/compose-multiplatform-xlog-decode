@@ -24,8 +24,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -37,7 +35,6 @@ import androidx.compose.ui.draganddrop.dragData
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.FrameWindowScope
 import compose_multiplatform_xlog_decode.generated.resources.Res
 import compose_multiplatform_xlog_decode.generated.resources.click_to_select_the_log_file_or_drag_the_log_file_here
 import compose_multiplatform_xlog_decode.generated.resources.if_the_log_is_encrypted_the_private_key_needs_to_be_entered
@@ -45,7 +42,11 @@ import compose_multiplatform_xlog_decode.generated.resources.open_the_file
 import compose_multiplatform_xlog_decode.generated.resources.parse_the_file
 import compose_multiplatform_xlog_decode.generated.resources.parsing_successful
 import compose_multiplatform_xlog_decode.generated.resources.please_select_the_log_file_first
-import compose_multiplatform_xlog_decode.generated.resources.please_select_the_xlog_file
+import github.leavesczy.xlog.decode.logic.DecryptionPageViewState
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.dialogs.FileKitMode
+import io.github.vinceglb.filekit.dialogs.FileKitType
+import io.github.vinceglb.filekit.dialogs.openFilePicker
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -61,8 +62,8 @@ import kotlin.io.path.toPath
  * @Desc:
  */
 @Composable
-fun FrameWindowScope.MainPage(
-    pageViewState: MainPageViewState,
+fun DecryptionPage(
+    pageViewState: DecryptionPageViewState,
     snackBarHostState: SnackbarHostState
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -74,19 +75,14 @@ fun FrameWindowScope.MainPage(
         verticalArrangement = Arrangement.spacedBy(space = 24.dp)
     ) {
         LogFilePath(
-            logPath = pageViewState.logPath,
-            confirmLogFilePath = {
-                pageViewState.onInputLogFilePathChange(it)
-            },
-            openFileDialog = {
-                coroutineScope.launch {
-                    pageViewState.openFileDialog()
-                }
+            selectedLogFiles = pageViewState.selectedLogFiles,
+            confirmLogFiles = {
+                pageViewState.onLogFileIsSelected(it)
             }
         )
         PrivateKey(
             privateKey = pageViewState.privateKey,
-            onInputPrivateKeyChange = pageViewState.onInputPrivateKeyChange
+            onInputPrivateKey = pageViewState.onInputPrivateKey
         )
         Button(
             modifier = Modifier
@@ -94,15 +90,15 @@ fun FrameWindowScope.MainPage(
                 .height(height = 45.dp),
             onClick = {
                 coroutineScope.launch {
-                    val logPath = pageViewState.logPath
-                    if (logPath.isBlank()) {
+                    val selectedLogFiles = pageViewState.selectedLogFiles
+                    if (selectedLogFiles.isEmpty()) {
                         snackBarHostState.showSnackbar(
                             message = getString(resource = Res.string.please_select_the_log_file_first),
                             duration = SnackbarDuration.Short
                         )
                     } else {
                         val outFile = pageViewState.decodeLog()
-                        if (outFile != null) {
+                        outFile?.forEach {
                             val result = snackBarHostState.showSnackbar(
                                 message = getString(resource = Res.string.parsing_successful),
                                 actionLabel = getString(resource = Res.string.open_the_file),
@@ -111,7 +107,7 @@ fun FrameWindowScope.MainPage(
                             )
                             when (result) {
                                 SnackbarResult.ActionPerformed -> {
-                                    pageViewState.openFile(outFile)
+                                    pageViewState.openFile(it)
                                 }
 
                                 SnackbarResult.Dismissed -> {
@@ -133,37 +129,17 @@ fun FrameWindowScope.MainPage(
             scrollState = pageViewState.logScrollState
         )
     }
-    val fileDialogIsAwaiting by remember {
-        derivedStateOf {
-            pageViewState.openDialog.onResult != null
-        }
-    }
-    if (fileDialogIsAwaiting) {
-        FileDialog(
-            title = stringResource(resource = Res.string.please_select_the_xlog_file),
-            fileExtension = xLogFileExtension,
-            onResult = {
-                if (it != null) {
-                    if (it.isXLogFile()) {
-                        pageViewState.onInputLogFilePathChange(it)
-                    } else {
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(message = getString(resource = Res.string.please_select_the_xlog_file))
-                        }
-                    }
-                }
-                pageViewState.openDialog.onResult(result = it)
-            }
-        )
-    }
 }
 
 @Composable
 private fun LogFilePath(
-    logPath: String,
-    confirmLogFilePath: (Path) -> Unit,
-    openFileDialog: () -> Unit
+    selectedLogFiles: List<String>,
+    confirmLogFiles: (List<String>) -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val logPath = remember(key1 = selectedLogFiles) {
+        selectedLogFiles.joinToString(separator = "\n")
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -177,7 +153,8 @@ private fun LogFilePath(
                         if (dragData is DragData.FilesList) {
                             val files = dragData.readFiles()
                             files.any {
-                                URI(it).toPath().isXLogFile()
+                                val path = URI(it).toPath()
+                                path.isXLogFile()
                             }
                         } else {
                             false
@@ -190,14 +167,13 @@ private fun LogFilePath(
                             val paths = files.mapNotNull {
                                 val path = URI(it).toPath()
                                 if (path.isXLogFile()) {
-                                    path
+                                    path.pathString
                                 } else {
                                     null
                                 }
                             }
-                            val path = paths.firstOrNull()
-                            if (path != null) {
-                                confirmLogFilePath(path)
+                            if (paths.isNotEmpty()) {
+                                confirmLogFiles(paths)
                             }
                             return true
                         }
@@ -221,7 +197,25 @@ private fun LogFilePath(
             modifier = Modifier
                 .matchParentSize()
                 .clip(shape = RoundedCornerShape(size = 18.dp))
-                .clickable(onClick = openFileDialog)
+                .clickable(onClick = {
+                    coroutineScope.launch {
+                        val files = FileKit.openFilePicker(
+                            type = FileKitType.File(extension = xLogFileExtension),
+                            mode = FileKitMode.Multiple()
+                        )
+                        val paths = files?.mapNotNull {
+                            val file = it.file
+                            if (file.isXLogFile()) {
+                                file.path
+                            } else {
+                                null
+                            }
+                        }
+                        if (!paths.isNullOrEmpty()) {
+                            confirmLogFiles(paths)
+                        }
+                    }
+                })
         )
     }
 }
@@ -229,7 +223,7 @@ private fun LogFilePath(
 @Composable
 private fun PrivateKey(
     privateKey: String,
-    onInputPrivateKeyChange: (String) -> Unit
+    onInputPrivateKey: (String) -> Unit
 ) {
     OutlinedTextField(
         modifier = Modifier
@@ -242,7 +236,7 @@ private fun PrivateKey(
                 text = stringResource(resource = Res.string.if_the_log_is_encrypted_the_private_key_needs_to_be_entered)
             )
         },
-        onValueChange = onInputPrivateKeyChange
+        onValueChange = onInputPrivateKey
     )
 }
 
@@ -284,5 +278,9 @@ private const val xLogFileExtension = "xlog"
 
 private fun Path.isXLogFile(): Boolean {
     val file = File(pathString)
-    return file.exists() && file.isFile && file.extension == xLogFileExtension
+    return file.isXLogFile()
+}
+
+private fun File.isXLogFile(): Boolean {
+    return exists() && isFile && extension == xLogFileExtension
 }

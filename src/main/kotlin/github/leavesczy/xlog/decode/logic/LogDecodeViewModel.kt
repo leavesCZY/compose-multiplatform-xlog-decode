@@ -1,4 +1,4 @@
-package github.leavesczy.xlog.decode
+package github.leavesczy.xlog.decode.logic
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.getValue
@@ -6,55 +6,48 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import compose_multiplatform_xlog_decode.generated.resources.Res
-import compose_multiplatform_xlog_decode.generated.resources.parsing_successful_file_path
 import github.leavesczy.xlog.decode.core.DecryptUtils
 import github.leavesczy.xlog.decode.core.LogDecode
 import github.leavesczy.xlog.decode.core.Logger
-import github.leavesczy.xlog.decode.ui.DialogState
-import github.leavesczy.xlog.decode.ui.MainPageViewState
-import github.leavesczy.xlog.decode.ui.Page
-import github.leavesczy.xlog.decode.ui.SecretKeyPageViewState
-import github.leavesczy.xlog.decode.ui.SettingsPageViewState
-import github.leavesczy.xlog.decode.ui.Theme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.getString
 import java.awt.Desktop
+import java.awt.Desktop.Action
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.nio.file.Path
 import java.text.SimpleDateFormat
 import java.util.Date
-import kotlin.io.path.pathString
 
 /**
  * @Author: leavesCZY
  * @Date: 2024/6/4 14:16
  * @Desc:
  */
-class LogDecodeViewModel :
-    ViewModel(viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
+class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
 
     var mainPageViewState by mutableStateOf(
         value = MainPageViewState(
-            page = Page.Main,
+            page = Page.Decryption,
+            switchPage = ::switchPage
+        )
+    )
+        private set
+
+    var decryptionPageViewState by mutableStateOf(
+        value = DecryptionPageViewState(
             privateKey = "",
-            openDialog = DialogState(),
-            logPath = "",
+            selectedLogFiles = emptyList(),
             runtimeLog = "",
             logScrollState = ScrollState(initial = 0),
-            onInputPrivateKeyChange = ::onInputPrivateKeyChange,
-            openFileDialog = ::openFileDialog,
-            onInputLogFilePathChange = ::onInputLogFilePathChange,
+            onInputPrivateKey = ::onInputPrivateKey,
+            onLogFileIsSelected = ::onLogFileIsSelected,
             decodeLog = ::decodeLog,
-            openFile = ::openFile,
-            switchPage = ::switchPage
+            openFile = ::openFile
         )
     )
         private set
@@ -100,57 +93,53 @@ class LogDecodeViewModel :
         val theme = Theme.entries.find { it.type == themeType } ?: settingsPageViewState.theme
         val autOpenFileWhenParsingIsSuccessful =
             DataStoreManager.autoOpenFileWhenParsingIsSuccessful().first()
-        mainPageViewState = mainPageViewState.copy(privateKey = privateKey)
+        decryptionPageViewState = decryptionPageViewState.copy(privateKey = privateKey)
         settingsPageViewState = settingsPageViewState.copy(
             theme = theme,
             autoOpenFileWhenParsingIsSuccessful = autOpenFileWhenParsingIsSuccessful
         )
     }
 
-    private fun onInputPrivateKeyChange(privateKey: String) {
-        mainPageViewState = mainPageViewState.copy(privateKey = privateKey)
+    private fun onInputPrivateKey(privateKey: String) {
+        decryptionPageViewState = decryptionPageViewState.copy(privateKey = privateKey)
         viewModelScope.launch {
             DataStoreManager.updatePrivateKey(privateKey = privateKey)
         }
     }
 
-    private fun onInputLogFilePathChange(logPath: Path) {
-        mainPageViewState = mainPageViewState.copy(logPath = logPath.pathString)
+    private fun onLogFileIsSelected(logPathList: List<String>) {
+        decryptionPageViewState = decryptionPageViewState.copy(selectedLogFiles = logPathList)
     }
 
-    private suspend fun openFileDialog() {
-        mainPageViewState.openDialog.awaitResult()
-    }
-
-    private suspend fun decodeLog(): File? {
+    private suspend fun decodeLog(): List<File> {
         return withContext(context = Dispatchers.Default) {
-            val logPath = mainPageViewState.logPath
-            val logFile = File(logPath)
-            val outFile = buildOutFile(logFile = logFile)
-            try {
-                logDecode.decodeFile(
-                    privateKey = mainPageViewState.privateKey,
-                    logFile = logFile,
-                    outFile = outFile
-                )
-                val filePathLog = getString(
-                    resource = Res.string.parsing_successful_file_path,
-                    outFile.absolutePath
-                )
-                appendLog {
-                    filePathLog
+            val viewState = decryptionPageViewState
+            val selectedLogFiles = viewState.selectedLogFiles
+            val result = mutableListOf<File>()
+            selectedLogFiles.forEach {
+                val logFile = File(it)
+                val outFile = buildOutFile(logFile = logFile)
+                try {
+                    logDecode.decodeFile(
+                        privateKey = viewState.privateKey,
+                        logFile = logFile,
+                        outFile = outFile
+                    )
+                    autoOpenFileIfNeed(file = outFile)
+                    result.add(element = outFile)
+                } catch (throwable: Throwable) {
+                    outFile.delete()
+                    appendLog {
+                        val stringWriter = StringWriter()
+                        throwable.printStackTrace(PrintWriter(stringWriter, true))
+                        stringWriter.toString()
+                    }
                 }
-                autoOpenFileIfNeed(file = outFile)
-                outFile
-            } catch (throwable: Throwable) {
-                outFile.delete()
                 appendLog {
-                    val stringWriter = StringWriter()
-                    throwable.printStackTrace(PrintWriter(stringWriter, true))
-                    stringWriter.toString()
+                    "-----------------------------------------------------------------------"
                 }
-                null
             }
+            result
         }
     }
 
@@ -164,8 +153,8 @@ class LogDecodeViewModel :
     private fun appendLog(log: () -> Any) {
         val mLog = log().toString()
         if (mLog.isNotBlank()) {
-            mainPageViewState =
-                mainPageViewState.copy(runtimeLog = mainPageViewState.runtimeLog + mLog + "\n\n")
+            val viewState = decryptionPageViewState
+            decryptionPageViewState = viewState.copy(runtimeLog = viewState.runtimeLog + mLog + "\n\n")
         }
     }
 
@@ -173,7 +162,7 @@ class LogDecodeViewModel :
         withContext(context = Dispatchers.IO) {
             if (Desktop.isDesktopSupported()) {
                 val desktop = Desktop.getDesktop()
-                if (desktop.isSupported(Desktop.Action.OPEN)) {
+                if (desktop.isSupported(Action.OPEN)) {
                     desktop.open(file)
                 }
             }

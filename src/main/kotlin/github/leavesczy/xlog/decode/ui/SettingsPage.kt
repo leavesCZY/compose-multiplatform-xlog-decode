@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import compose_multiplatform_xlog_decode.generated.resources.Res
 import compose_multiplatform_xlog_decode.generated.resources.the_file_will_be_automatically_opened_after_successful_parsing
 import compose_multiplatform_xlog_decode.generated.resources.theme
+import github.leavesczy.xlog.decode.logic.SettingsPageViewState
+import github.leavesczy.xlog.decode.logic.Theme
 import org.jetbrains.compose.resources.stringResource
 
 /**

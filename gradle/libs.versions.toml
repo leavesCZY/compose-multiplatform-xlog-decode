@@ -9,6 +9,7 @@ jetbrains-lifecycle-viewmodel-compose = "2.10.0"
 androidx-datastore = "1.2.1"
 luben-zstd-jni = "1.5.7-7"
 bouncycastle-bcprov-jdk18on = "1.83"
+filekit-dialogs = "0.13.0"
 
 [plugins]
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrains-kotlin" }
@@ -24,3 +25,4 @@ jetbrains-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifec
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
 luben-zstd-jni = { module = "com.github.luben:zstd-jni", version.ref = "luben-zstd-jni" }
 bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle-bcprov-jdk18on" }
+filekit-dialogs = { module = "io.github.vinceglb:filekit-dialogs", version.ref = "filekit-dialogs" }

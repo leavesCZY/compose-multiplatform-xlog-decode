@@ -13,9 +13,7 @@ kotlin {
         jvmTarget.set(JvmTarget.JVM_21)
         optIn.set(
             setOf(
-                "androidx.compose.ui.ExperimentalComposeUiApi",
-                "androidx.compose.foundation.ExperimentalFoundationApi",
-                "androidx.compose.material3.ExperimentalMaterial3Api"
+                "androidx.compose.ui.ExperimentalComposeUiApi"
             )
         )
     }
@@ -29,6 +27,7 @@ dependencies {
     implementation(libs.jetbrains.compose.material.icons.extended)
     implementation(libs.jetbrains.lifecycle.viewmodel.compose)
     implementation(libs.androidx.datastore.preferences.core)
+    implementation(libs.filekit.dialogs)
 }
 
 enum class OS {
@@ -93,6 +92,7 @@ compose.desktop {
                 shortcut = true
                 menuGroup = mPackageName
                 iconFile.set(resourcesDir.resolve("linux_launch_icon.png"))
+                modules("jdk.security.auth")
             }
         }
         buildTypes.release {

@@ -76,6 +76,9 @@ class LogDecode(private val logger: Logger) {
         val lodFileDataInputStream = DataInputStream(logFileInputStream)
         val outFileBufferedWriter = outFile.outputStream().bufferedWriter()
         try {
+            logger.debug {
+                "start parsing : " + logFile.path
+            }
             val lofBuffer = ByteArray(lodFileDataInputStream.available())
             lodFileDataInputStream.readFully(lofBuffer)
             var lofBufferOffset = 0
@@ -87,24 +90,20 @@ class LogDecode(private val logger: Logger) {
                 )
                 if (logSpace == null) {
                     logger.debug {
-                        "finish"
-                    }
-                    logger.debug {
-                        "-----------------------------------------------------------------------"
+                        "parsing successful : " + outFile.path
                     }
                 } else {
-                    val log = buildString {
-                        append("logSpace: $logSpace")
-                        append("\n")
-                        val teaKey = logSpace.teaKey
-                        if (teaKey == null) {
-                            append("teaKey: null")
-                        } else {
-                            append("teaKey: ${StringUtils.byteArrayToHexString(bytes = teaKey)}")
-                        }
-                    }
                     logger.debug {
-                        log
+                        buildString {
+                            append("logSpace: $logSpace")
+                            append("\n")
+                            val teaKey = logSpace.teaKey
+                            if (teaKey == null) {
+                                append("teaKey: null")
+                            } else {
+                                append("teaKey: ${StringUtils.byteArrayToHexString(bytes = teaKey)}")
+                            }
+                        }
                     }
                 }
                 if (logSpace == null) {

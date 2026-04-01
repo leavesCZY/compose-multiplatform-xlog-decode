@@ -1,4 +1,4 @@
-package github.leavesczy.xlog.decode
+package github.leavesczy.xlog.decode.logic
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.booleanPreferencesKey

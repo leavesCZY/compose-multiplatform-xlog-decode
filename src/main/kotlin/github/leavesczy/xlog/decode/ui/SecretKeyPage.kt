@@ -19,6 +19,7 @@ import compose_multiplatform_xlog_decode.generated.resources.Res
 import compose_multiplatform_xlog_decode.generated.resources.generate_the_key_pair
 import compose_multiplatform_xlog_decode.generated.resources.private_key
 import compose_multiplatform_xlog_decode.generated.resources.public_key
+import github.leavesczy.xlog.decode.logic.SecretKeyPageViewState
 import org.jetbrains.compose.resources.stringResource
 
 /**

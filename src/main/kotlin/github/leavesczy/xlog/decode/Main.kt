@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
@@ -38,8 +37,9 @@ import compose_multiplatform_xlog_decode.generated.resources.application_icon
 import compose_multiplatform_xlog_decode.generated.resources.decryption
 import compose_multiplatform_xlog_decode.generated.resources.secret_key
 import compose_multiplatform_xlog_decode.generated.resources.settings
-import github.leavesczy.xlog.decode.ui.MainPage
-import github.leavesczy.xlog.decode.ui.Page
+import github.leavesczy.xlog.decode.logic.LogDecodeViewModel
+import github.leavesczy.xlog.decode.logic.Page
+import github.leavesczy.xlog.decode.ui.DecryptionPage
 import github.leavesczy.xlog.decode.ui.SecretKeyPage
 import github.leavesczy.xlog.decode.ui.SettingsPage
 import github.leavesczy.xlog.decode.ui.theme.AppTheme
@@ -69,7 +69,7 @@ fun main() = application {
 }
 
 @Composable
-private fun FrameWindowScope.Main() {
+private fun Main() {
     val logDecodeViewModel = viewModel {
         LogDecodeViewModel()
     }
@@ -111,7 +111,7 @@ private fun FrameWindowScope.Main() {
                             val icon: ImageVector
                             val title: StringResource
                             when (page) {
-                                Page.Main -> {
+                                Page.Decryption -> {
                                     icon = Icons.Outlined.Loop
                                     title = Res.string.decryption
                                 }
@@ -152,9 +152,9 @@ private fun FrameWindowScope.Main() {
                     }
                 }
                 when (logDecodeViewModel.mainPageViewState.page) {
-                    Page.Main -> {
-                        MainPage(
-                            pageViewState = logDecodeViewModel.mainPageViewState,
+                    Page.Decryption -> {
+                        DecryptionPage(
+                            pageViewState = logDecodeViewModel.decryptionPageViewState,
                             snackBarHostState = snackBarHostState
                         )
                     }
