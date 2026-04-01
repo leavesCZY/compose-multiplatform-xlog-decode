@@ -35,7 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import compose_multiplatform_xlog_decode.generated.resources.Res
 import compose_multiplatform_xlog_decode.generated.resources.app_name
 import compose_multiplatform_xlog_decode.generated.resources.application_icon
-import compose_multiplatform_xlog_decode.generated.resources.log
+import compose_multiplatform_xlog_decode.generated.resources.decryption
 import compose_multiplatform_xlog_decode.generated.resources.secret_key
 import compose_multiplatform_xlog_decode.generated.resources.settings
 import github.leavesczy.xlog.decode.ui.MainPage
@@ -113,7 +113,7 @@ private fun FrameWindowScope.Main() {
                             when (page) {
                                 Page.Main -> {
                                     icon = Icons.Outlined.Loop
-                                    title = Res.string.log
+                                    title = Res.string.decryption
                                 }
 
                                 Page.SecretKey -> {

@@ -12,7 +12,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(files("libs/bcprov-jdk18on-1.80.jar"))
+    implementation(files("libs/bcprov-jdk18on-1.83.jar"))
 //    implementation(libs.bouncycastle.bcprov.jdk18on)
     implementation(libs.luben.zstd.jni)
 }

@@ -31,9 +31,9 @@ fun SecretKeyPage(pageViewState: SecretKeyPageViewState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 18.dp, top = 14.dp, end = 18.dp, bottom = 6.dp),
+            .padding(start = 20.dp, top = 20.dp, end = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(space = 18.dp)
+        verticalArrangement = Arrangement.spacedBy(space = 24.dp)
     ) {
         ReadOnlyTextField(
             modifier = Modifier

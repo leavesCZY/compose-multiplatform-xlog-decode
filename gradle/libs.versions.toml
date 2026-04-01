@@ -1,10 +1,10 @@
 [versions]
-jetbrains-kotlin = "2.3.10"
-jetbrains-compose-multiplatform = "1.10.2"
+jetbrains-kotlin = "2.3.20"
+jetbrains-compose-multiplatform = "1.10.3"
 
 jetbrains-compose-material3 = "1.9.0"
 jetbrains-compose-material-icons-extended = "1.7.3"
-jetbrains-lifecycle-viewmodel-compose = "2.9.6"
+jetbrains-lifecycle-viewmodel-compose = "2.10.0"
 
 androidx-datastore = "1.2.1"
 luben-zstd-jni = "1.5.7-7"

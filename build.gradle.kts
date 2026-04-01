@@ -21,22 +21,6 @@ kotlin {
     }
 }
 
-tasks {
-    withType<Jar> {
-        exclude(
-            "META-INF/*.MF",
-            "META-INF/*.RSA",
-            "META-INF/*.SF",
-            "META-INF/*.EC",
-            "META-INF/*.DSA",
-            "META-INF/*.LIST",
-            "META-INF/*.kotlin_module",
-            "META-INF/LICENSE",
-            "META-INF/LICENSE.txt"
-        )
-    }
-}
-
 dependencies {
     implementation(project(":core"))
     implementation(compose.desktop.currentOs)

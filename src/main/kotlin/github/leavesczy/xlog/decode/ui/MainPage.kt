@@ -69,9 +69,9 @@ fun FrameWindowScope.MainPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 18.dp, top = 14.dp, end = 18.dp, bottom = 6.dp),
+            .padding(start = 20.dp, top = 20.dp, end = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(space = 18.dp)
+        verticalArrangement = Arrangement.spacedBy(space = 24.dp)
     ) {
         LogFilePath(
             logPath = pageViewState.logPath,
@@ -213,7 +213,9 @@ private fun LogFilePath(
                     maxLines = 1
                 )
             },
-            onValueChange = {}
+            onValueChange = {
+
+            }
         )
         Box(
             modifier = Modifier
@@ -255,7 +257,6 @@ private fun RuntimeLog(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp)
     ) {
         SelectionContainer(
             modifier = Modifier
@@ -264,14 +265,15 @@ private fun RuntimeLog(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .verticalScroll(state = scrollState),
+                    .verticalScroll(state = scrollState)
+                    .padding(vertical = 10.dp),
                 text = log,
                 fontSize = 16.sp
             )
         }
         VerticalScrollbar(
             modifier = Modifier
-                .align(Alignment.CenterEnd)
+                .align(alignment = Alignment.CenterEnd)
                 .fillMaxHeight(),
             adapter = rememberScrollbarAdapter(scrollState = scrollState)
         )
