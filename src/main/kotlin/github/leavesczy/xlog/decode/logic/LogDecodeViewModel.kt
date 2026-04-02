@@ -125,7 +125,6 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
                         logFile = logFile,
                         outFile = outFile
                     )
-                    autoOpenFileIfNeed(file = outFile)
                     result.add(element = outFile)
                 } catch (throwable: Throwable) {
                     outFile.delete()
@@ -138,6 +137,9 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
                 appendLog {
                     "-----------------------------------------------------------------------"
                 }
+            }
+            if (result.isNotEmpty()) {
+                autoOpenFileIfNeed(fileList = result)
             }
             result
         }
@@ -158,20 +160,22 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
         }
     }
 
-    private suspend fun openFile(file: File) {
+    private suspend fun autoOpenFileIfNeed(fileList: List<File>) {
+        if (settingsPageViewState.autoOpenFileWhenParsingIsSuccessful) {
+            openFile(fileList = fileList)
+        }
+    }
+
+    private suspend fun openFile(fileList: List<File>) {
         withContext(context = Dispatchers.IO) {
             if (Desktop.isDesktopSupported()) {
                 val desktop = Desktop.getDesktop()
                 if (desktop.isSupported(Action.OPEN)) {
-                    desktop.open(file)
+                    fileList.forEach {
+                        desktop.open(it)
+                    }
                 }
             }
-        }
-    }
-
-    private suspend fun autoOpenFileIfNeed(file: File) {
-        if (settingsPageViewState.autoOpenFileWhenParsingIsSuccessful) {
-            openFile(file = file)
         }
     }
 

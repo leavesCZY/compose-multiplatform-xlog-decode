@@ -129,7 +129,6 @@ private fun Main() {
                             NavigationRailItem(
                                 modifier = Modifier,
                                 selected = logDecodeViewModel.mainPageViewState.page == page,
-                                alwaysShowLabel = true,
                                 label = {
                                     Text(
                                         modifier = Modifier,

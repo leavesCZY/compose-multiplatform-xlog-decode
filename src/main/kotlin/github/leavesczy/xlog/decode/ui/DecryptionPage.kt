@@ -37,10 +37,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import compose_multiplatform_xlog_decode.generated.resources.Res
 import compose_multiplatform_xlog_decode.generated.resources.click_to_select_the_log_file_or_drag_the_log_file_here
+import compose_multiplatform_xlog_decode.generated.resources.file_status_summary
 import compose_multiplatform_xlog_decode.generated.resources.if_the_log_is_encrypted_the_private_key_needs_to_be_entered
 import compose_multiplatform_xlog_decode.generated.resources.open_the_file
 import compose_multiplatform_xlog_decode.generated.resources.parse_the_file
-import compose_multiplatform_xlog_decode.generated.resources.parsing_successful
 import compose_multiplatform_xlog_decode.generated.resources.please_select_the_log_file_first
 import github.leavesczy.xlog.decode.logic.DecryptionPageViewState
 import io.github.vinceglb.filekit.FileKit
@@ -97,22 +97,37 @@ fun DecryptionPage(
                             duration = SnackbarDuration.Short
                         )
                     } else {
-                        val outFile = pageViewState.decodeLog()
-                        outFile?.forEach {
-                            val result = snackBarHostState.showSnackbar(
-                                message = getString(resource = Res.string.parsing_successful),
-                                actionLabel = getString(resource = Res.string.open_the_file),
-                                withDismissAction = true,
-                                duration = SnackbarDuration.Short
-                            )
-                            when (result) {
-                                SnackbarResult.ActionPerformed -> {
-                                    pageViewState.openFile(it)
+                        val outFiles = pageViewState.decodeLog()
+                        val selectedLogFilesSize = selectedLogFiles.size
+                        val successSize = if (outFiles.isNullOrEmpty()) {
+                            0
+                        } else {
+                            outFiles.size
+                        }
+                        val failedSize = selectedLogFilesSize - successSize
+                        val result = snackBarHostState.showSnackbar(
+                            message = getString(
+                                resource = Res.string.file_status_summary,
+                                selectedLogFilesSize,
+                                successSize,
+                                failedSize
+                            ),
+                            actionLabel = if (outFiles.isNullOrEmpty()) {
+                                null
+                            } else {
+                                getString(resource = Res.string.open_the_file)
+                            },
+                            duration = SnackbarDuration.Short
+                        )
+                        when (result) {
+                            SnackbarResult.ActionPerformed -> {
+                                if (!outFiles.isNullOrEmpty()) {
+                                    pageViewState.openFile(outFiles)
                                 }
+                            }
 
-                                SnackbarResult.Dismissed -> {
+                            SnackbarResult.Dismissed -> {
 
-                                }
                             }
                         }
                     }
@@ -138,7 +153,7 @@ private fun LogFilePath(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val logPath = remember(key1 = selectedLogFiles) {
-        selectedLogFiles.joinToString(separator = "\n")
+        selectedLogFiles.joinToString(separator = "\n", limit = 5)
     }
     Box(
         modifier = Modifier
@@ -177,7 +192,7 @@ private fun LogFilePath(
                             }
                             return true
                         }
-                    },
+                    }
                 ),
             value = logPath,
             readOnly = true,
@@ -189,9 +204,7 @@ private fun LogFilePath(
                     maxLines = 1
                 )
             },
-            onValueChange = {
-
-            }
+            onValueChange = {}
         )
         Box(
             modifier = Modifier

@@ -36,7 +36,7 @@ data class DecryptionPageViewState(
     val onInputPrivateKey: (String) -> Unit,
     val onLogFileIsSelected: (List<String>) -> Unit,
     val decodeLog: suspend () -> List<File>?,
-    val openFile: suspend (File) -> Unit
+    val openFile: suspend (List<File>) -> Unit
 )
 
 @Stable
