@@ -65,7 +65,7 @@ fun SecretKeyPage(pageViewState: SecretKeyPageViewState) {
 @Composable
 private fun ReadOnlyTextField(
     modifier: Modifier,
-    label: String?,
+    label: String,
     value: String
 ) {
     OutlinedTextField(
@@ -74,15 +74,11 @@ private fun ReadOnlyTextField(
         value = value,
         readOnly = true,
         shape = RoundedCornerShape(size = 18.dp),
-        label = if (label.isNullOrBlank()) {
-            null
-        } else {
-            {
-                Text(
-                    modifier = Modifier,
-                    text = label
-                )
-            }
+        label = {
+            Text(
+                modifier = Modifier,
+                text = label
+            )
         },
         onValueChange = {}
     )

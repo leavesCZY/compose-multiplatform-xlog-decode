@@ -1,6 +1,7 @@
 package github.leavesczy.xlog.decode.ui
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.ScrollbarStyle
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -24,8 +26,11 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
@@ -90,6 +95,7 @@ fun DecryptionPage(
                 .height(height = 45.dp),
             onClick = {
                 coroutineScope.launch {
+                    snackBarHostState.currentSnackbarData?.dismiss()
                     val selectedLogFiles = pageViewState.selectedLogFiles
                     if (selectedLogFiles.isEmpty()) {
                         snackBarHostState.showSnackbar(
@@ -117,7 +123,7 @@ fun DecryptionPage(
                             } else {
                                 getString(resource = Res.string.open_the_file)
                             },
-                            duration = SnackbarDuration.Short
+                            withDismissAction = true
                         )
                         when (result) {
                             SnackbarResult.ActionPerformed -> {
@@ -258,8 +264,15 @@ private fun RuntimeLog(
     log: String,
     scrollState: ScrollState
 ) {
+    var isFirstComposition by remember {
+        mutableStateOf(value = true)
+    }
     LaunchedEffect(key1 = log.length) {
-        scrollState.animateScrollTo(value = scrollState.maxValue)
+        if (isFirstComposition) {
+            isFirstComposition = false
+        } else {
+            scrollState.animateScrollTo(value = scrollState.maxValue)
+        }
     }
     Box(
         modifier = Modifier
@@ -267,13 +280,14 @@ private fun RuntimeLog(
     ) {
         SelectionContainer(
             modifier = Modifier
+                .align(alignment = Alignment.TopCenter)
                 .fillMaxWidth()
         ) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(state = scrollState)
-                    .padding(vertical = 10.dp),
+                    .padding(top = 10.dp, bottom = 20.dp),
                 text = log,
                 fontSize = 16.sp
             )
@@ -282,6 +296,14 @@ private fun RuntimeLog(
             modifier = Modifier
                 .align(alignment = Alignment.CenterEnd)
                 .fillMaxHeight(),
+            style = ScrollbarStyle(
+                minimalHeight = 22.dp,
+                thickness = 10.dp,
+                shape = RoundedCornerShape(size = 4.dp),
+                unhoverColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
+                hoverColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 1f),
+                hoverDurationMillis = 300
+            ),
             adapter = rememberScrollbarAdapter(scrollState = scrollState)
         )
     }

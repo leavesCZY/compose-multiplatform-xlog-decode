@@ -28,7 +28,7 @@ import java.util.Date
  * @Date: 2024/6/4 14:16
  * @Desc:
  */
-class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
+class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)) {
 
     var mainPageViewState by mutableStateOf(
         value = MainPageViewState(
@@ -101,8 +101,8 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
     }
 
     private fun onInputPrivateKey(privateKey: String) {
-        decryptionPageViewState = decryptionPageViewState.copy(privateKey = privateKey)
         viewModelScope.launch {
+            decryptionPageViewState = decryptionPageViewState.copy(privateKey = privateKey)
             DataStoreManager.updatePrivateKey(privateKey = privateKey)
         }
     }
@@ -167,7 +167,7 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
     }
 
     private suspend fun openFile(fileList: List<File>) {
-        withContext(context = Dispatchers.IO) {
+        withContext(context = Dispatchers.Default) {
             if (Desktop.isDesktopSupported()) {
                 val desktop = Desktop.getDesktop()
                 if (desktop.isSupported(Action.OPEN)) {
@@ -180,14 +180,12 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(SupervisorJ
     }
 
     private fun generateTheKeyPair() {
-        viewModelScope.launch {
-            withContext(context = Dispatchers.Default) {
-                val keyPair = DecryptUtils.generateKeyPair()
-                secretKeyPageViewState = secretKeyPageViewState.copy(
-                    privateKey = keyPair.privateKey,
-                    publicKey = keyPair.publicKey
-                )
-            }
+        viewModelScope.launch(context = Dispatchers.Default) {
+            val keyPair = DecryptUtils.generateKeyPair()
+            secretKeyPageViewState = secretKeyPageViewState.copy(
+                privateKey = keyPair.privateKey,
+                publicKey = keyPair.publicKey
+            )
         }
     }
 
