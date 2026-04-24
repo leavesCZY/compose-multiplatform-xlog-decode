@@ -28,7 +28,8 @@ import java.util.Date
  * @Date: 2024/6/4 14:16
  * @Desc:
  */
-class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)) {
+class LogDecodeViewModel :
+    ViewModel(viewModelScope = CoroutineScope(context = SupervisorJob() + Dispatchers.Default)) {
 
     var mainPageViewState by mutableStateOf(
         value = MainPageViewState(
@@ -156,7 +157,8 @@ class LogDecodeViewModel : ViewModel(viewModelScope = CoroutineScope(context = S
         val mLog = log().toString()
         if (mLog.isNotBlank()) {
             val viewState = decryptionPageViewState
-            decryptionPageViewState = viewState.copy(runtimeLog = viewState.runtimeLog + mLog + "\n\n")
+            decryptionPageViewState =
+                viewState.copy(runtimeLog = viewState.runtimeLog + mLog + "\n\n")
         }
     }
 

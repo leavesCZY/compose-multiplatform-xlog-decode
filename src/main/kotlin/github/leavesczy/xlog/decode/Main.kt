@@ -56,7 +56,6 @@ import java.awt.Toolkit
 fun main() = application {
     Window(
         title = stringResource(resource = Res.string.app_name),
-        resizable = true,
         icon = painterResource(Res.drawable.application_icon),
         state = rememberWindowState(
             size = preferredWindowSize(),
