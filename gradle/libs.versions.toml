@@ -1,15 +1,15 @@
 [versions]
 jetbrains-kotlin = "2.3.21"
-jetbrains-compose-multiplatform = "1.11.0-beta03"
+jetbrains-compose-multiplatform = "1.11.0"
 
-jetbrains-compose-material3 = "1.9.0"
+jetbrains-compose-material3 = "1.11.0-alpha07"
 jetbrains-compose-material-icons-extended = "1.7.3"
-jetbrains-lifecycle-viewmodel-compose = "2.10.0"
+jetbrains-lifecycle-viewmodel-compose = "2.11.0-beta01"
 
 androidx-datastore = "1.2.1"
 
-luben-zstd-jni = "1.5.7-7"
-filekit-dialogs = "0.13.0"
+luben-zstd-jni = "1.5.7-8"
+filekit-dialogs = "0.14.1"
 bouncycastle-bcprov-jdk18on = "1.84"
 
 [plugins]
