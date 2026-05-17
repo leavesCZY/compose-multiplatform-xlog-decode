@@ -7,8 +7,8 @@ package github.leavesczy.xlog.decode.core
  */
 interface Logger {
 
-    fun debug(log: () -> Any)
+    fun debug(log: () -> String)
 
-    fun error(log: () -> Any)
+    fun error(log: () -> String)
 
 }

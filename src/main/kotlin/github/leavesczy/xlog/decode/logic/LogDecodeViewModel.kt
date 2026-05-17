@@ -1,6 +1,6 @@
 package github.leavesczy.xlog.decode.logic
 
-import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -43,8 +43,8 @@ class LogDecodeViewModel :
         value = DecryptionPageViewState(
             privateKey = "",
             selectedLogFiles = emptyList(),
-            runtimeLog = "",
-            logScrollState = ScrollState(initial = 0),
+            runtimeLogs = emptyList(),
+            lazyListState = LazyListState(),
             onInputPrivateKey = ::onInputPrivateKey,
             onLogFileIsSelected = ::onLogFileIsSelected,
             decodeLog = ::decodeLog,
@@ -73,11 +73,11 @@ class LogDecodeViewModel :
         private set
 
     private val logDecode = LogDecode(logger = object : Logger {
-        override fun debug(log: () -> Any) {
+        override fun debug(log: () -> String) {
             appendLog(log = log)
         }
 
-        override fun error(log: () -> Any) {
+        override fun error(log: () -> String) {
             appendLog(log = log)
         }
     })
@@ -91,11 +91,12 @@ class LogDecodeViewModel :
     private suspend fun initView() {
         val privateKey = DataStoreManager.privateKeyFlow().first()
         val themeType = DataStoreManager.themeFlow().first()
-        val theme = Theme.entries.find { it.type == themeType } ?: settingsPageViewState.theme
+        val mSettingsPageViewState = settingsPageViewState
+        val theme = Theme.entries.find { it.type == themeType } ?: mSettingsPageViewState.theme
         val autOpenFileWhenParsingIsSuccessful =
             DataStoreManager.autoOpenFileWhenParsingIsSuccessful().first()
         decryptionPageViewState = decryptionPageViewState.copy(privateKey = privateKey)
-        settingsPageViewState = settingsPageViewState.copy(
+        settingsPageViewState = mSettingsPageViewState.copy(
             theme = theme,
             autoOpenFileWhenParsingIsSuccessful = autOpenFileWhenParsingIsSuccessful
         )
@@ -153,12 +154,18 @@ class LogDecodeViewModel :
         )
     }
 
-    private fun appendLog(log: () -> Any) {
-        val mLog = log().toString()
-        if (mLog.isNotBlank()) {
+    private fun appendLog(log: () -> String) {
+        val logText = log()
+        if (logText.isNotBlank()) {
+            val maxSize = 500
             val viewState = decryptionPageViewState
-            decryptionPageViewState =
-                viewState.copy(runtimeLog = viewState.runtimeLog + mLog + "\n\n")
+            val logs = viewState.runtimeLogs + logText
+            val newRuntimeLogs = if (logs.size > maxSize) {
+                logs.takeLast(n = maxSize / 2)
+            } else {
+                logs
+            }
+            decryptionPageViewState = viewState.copy(runtimeLogs = newRuntimeLogs)
         }
     }
 

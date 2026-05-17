@@ -21,6 +21,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -56,7 +57,7 @@ import java.awt.Toolkit
 fun main() = application {
     Window(
         title = stringResource(resource = Res.string.app_name),
-        icon = painterResource(Res.drawable.application_icon),
+        icon = painterResource(resource = Res.drawable.application_icon),
         state = rememberWindowState(
             size = preferredWindowSize(),
             position = WindowPosition.Aligned(alignment = Alignment.Center)
@@ -72,6 +73,7 @@ private fun Main() {
     val logDecodeViewModel = viewModel {
         LogDecodeViewModel()
     }
+    val coroutineScope = rememberCoroutineScope()
     AppTheme(theme = logDecodeViewModel.settingsPageViewState.theme) {
         val snackBarHostState = remember {
             SnackbarHostState()
@@ -153,16 +155,21 @@ private fun Main() {
                     Page.Decryption -> {
                         DecryptionPage(
                             pageViewState = logDecodeViewModel.decryptionPageViewState,
-                            snackBarHostState = snackBarHostState
+                            snackBarHostState = snackBarHostState,
+                            coroutineScope = coroutineScope
                         )
                     }
 
                     Page.SecretKey -> {
-                        SecretKeyPage(pageViewState = logDecodeViewModel.secretKeyPageViewState)
+                        SecretKeyPage(
+                            pageViewState = logDecodeViewModel.secretKeyPageViewState
+                        )
                     }
 
                     Page.Settings -> {
-                        SettingsPage(pageViewState = logDecodeViewModel.settingsPageViewState)
+                        SettingsPage(
+                            pageViewState = logDecodeViewModel.settingsPageViewState
+                        )
                     }
                 }
             }

@@ -10,23 +10,23 @@ import java.util.Date
  * @Desc:
  */
 fun main() {
-    val privateKey = "a763761dabcadf7762cc1dc569e0d64eec757fdedd0aecc02817d5693ac83d74"
+    val privateKey = "fc0ef8f6f96159c94482acee862379496f93b15b4b9cf7389284f6f1fb5b9a94"
     val publicKey =
-        "9208edf99ad9825d75c14d88bcc39e3c53c2a2bea193e20d5b3a0a933b6eb4b44dec5757aad56b754c3cb672981d893f3b12222c9c1573740322ad9dc62dd332"
-    val zlibHasCryptLogFile = File("core/log/AppednerModeAsync_ZLIB_HasCrypt.xlog")
-    decodeFile(logFile = zlibHasCryptLogFile, privateKey = privateKey)
+        "9b46d6ff7774fe7502c5e0eb09a2c110a53dabe8daa4b20174abdca1715bb6cd9c2343d12f03dd4258fa3bad4fbd8004deb8578a35f32983ac912cdada41d34b"
     val zlibNoCryptLogFile = File("core/log/AppednerModeAsync_ZLIB_NoCrypt.xlog")
     decodeFile(logFile = zlibNoCryptLogFile, privateKey = "")
+    val zlibHasCryptLogFile = File("core/log/AppednerModeAsync_ZLIB_HasCrypt.xlog")
+    decodeFile(logFile = zlibHasCryptLogFile, privateKey = privateKey)
 }
 
 private fun decodeFile(logFile: File, privateKey: String) {
     val logDecode = LogDecode(logger = object : Logger {
-        override fun debug(log: () -> Any) {
-            println(log().toString())
+        override fun debug(log: () -> String) {
+            println(log())
         }
 
-        override fun error(log: () -> Any) {
-            println(log().toString())
+        override fun error(log: () -> String) {
+            println(log())
         }
     })
     val logFileName = logFile.nameWithoutExtension

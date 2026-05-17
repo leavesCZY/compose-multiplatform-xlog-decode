@@ -1,6 +1,5 @@
 package github.leavesczy.xlog.decode.ui
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.ScrollbarStyle
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
@@ -8,15 +7,18 @@ import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -25,12 +27,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
@@ -38,6 +35,7 @@ import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.draganddrop.DragData
 import androidx.compose.ui.draganddrop.dragData
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import compose_multiplatform_xlog_decode.generated.resources.Res
@@ -52,6 +50,7 @@ import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.openFilePicker
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -69,17 +68,18 @@ import kotlin.io.path.toPath
 @Composable
 fun DecryptionPage(
     pageViewState: DecryptionPageViewState,
-    snackBarHostState: SnackbarHostState
+    snackBarHostState: SnackbarHostState,
+    coroutineScope: CoroutineScope
 ) {
-    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 20.dp, top = 20.dp, end = 20.dp),
+            .padding(start = 20.dp, top = 20.dp, end = 20.dp, bottom = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(space = 24.dp)
     ) {
         LogFilePath(
+            coroutineScope = coroutineScope,
             selectedLogFiles = pageViewState.selectedLogFiles,
             confirmLogFiles = {
                 pageViewState.onLogFileIsSelected(it)
@@ -146,18 +146,18 @@ fun DecryptionPage(
             )
         }
         RuntimeLog(
-            log = pageViewState.runtimeLog,
-            scrollState = pageViewState.logScrollState
+            logs = pageViewState.runtimeLogs,
+            lazyListState = pageViewState.lazyListState
         )
     }
 }
 
 @Composable
 private fun LogFilePath(
+    coroutineScope: CoroutineScope,
     selectedLogFiles: List<String>,
     confirmLogFiles: (List<String>) -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val logPath = remember(key1 = selectedLogFiles) {
         selectedLogFiles.joinToString(separator = "\n", limit = 5)
     }
@@ -261,19 +261,9 @@ private fun PrivateKey(
 
 @Composable
 private fun RuntimeLog(
-    log: String,
-    scrollState: ScrollState
+    logs: List<String>,
+    lazyListState: LazyListState
 ) {
-    var isFirstComposition by remember {
-        mutableStateOf(value = true)
-    }
-    LaunchedEffect(key1 = log.length) {
-        if (isFirstComposition) {
-            isFirstComposition = false
-        } else {
-            scrollState.animateScrollTo(value = scrollState.maxValue)
-        }
-    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -283,14 +273,30 @@ private fun RuntimeLog(
                 .align(alignment = Alignment.TopCenter)
                 .fillMaxWidth()
         ) {
-            Text(
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(state = scrollState)
-                    .padding(top = 10.dp, bottom = 20.dp),
-                text = log,
-                fontSize = 16.sp
-            )
+                    .fillMaxWidth(),
+                state = lazyListState,
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(
+                    space = 10.dp,
+                    alignment = Alignment.Top
+                ),
+                contentPadding = PaddingValues(top = 10.dp, bottom = 20.dp)
+            ) {
+                items(
+                    items = logs,
+                    contentType = {
+                        "Log"
+                    }
+                ) {
+                    Log(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        log = it
+                    )
+                }
+            }
         }
         VerticalScrollbar(
             modifier = Modifier
@@ -304,9 +310,23 @@ private fun RuntimeLog(
                 hoverColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 1f),
                 hoverDurationMillis = 300
             ),
-            adapter = rememberScrollbarAdapter(scrollState = scrollState)
+            adapter = rememberScrollbarAdapter(scrollState = lazyListState)
         )
     }
+}
+
+@Composable
+private fun Log(
+    modifier: Modifier,
+    log: String
+) {
+    Text(
+        modifier = modifier,
+        text = log,
+        fontSize = 17.sp,
+        lineHeight = 22.sp,
+        textAlign = TextAlign.Start
+    )
 }
 
 private const val xLogFileExtension = "xlog"

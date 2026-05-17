@@ -13,4 +13,4 @@ Windows 系统推荐使用免安装版本 `compose-multiplatform-xlog-decode-win
 
 - [Compose Multiplatform 写一个跨平台的 xlog 解析工具](https://juejin.cn/post/7378452954221084682)
 
-![](https://github.com/user-attachments/assets/96f996c3-f407-4cd2-b707-cfd1bb948d46)
+![](https://github.com/user-attachments/assets/c8655ceb-6a74-47f3-aaf5-34d8406188e7)

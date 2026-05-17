@@ -1,6 +1,6 @@
 package github.leavesczy.xlog.decode.logic
 
-import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Stable
 import java.io.File
 
@@ -31,8 +31,8 @@ data class MainPageViewState(
 data class DecryptionPageViewState(
     val privateKey: String,
     val selectedLogFiles: List<String>,
-    val runtimeLog: String,
-    val logScrollState: ScrollState,
+    val runtimeLogs: List<String>,
+    val lazyListState: LazyListState,
     val onInputPrivateKey: (String) -> Unit,
     val onLogFileIsSelected: (List<String>) -> Unit,
     val decodeLog: suspend () -> List<File>?,
