@@ -44,6 +44,7 @@ import github.leavesczy.xlog.decode.ui.DecryptionPage
 import github.leavesczy.xlog.decode.ui.SecretKeyPage
 import github.leavesczy.xlog.decode.ui.SettingsPage
 import github.leavesczy.xlog.decode.ui.theme.AppTheme
+import io.github.vinceglb.filekit.FileKit
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -54,17 +55,27 @@ import java.awt.Toolkit
  * @Date: 2024/6/5 16:54
  * @Desc:
  */
-fun main() = application {
-    Window(
-        title = stringResource(resource = Res.string.app_name),
-        icon = painterResource(resource = Res.drawable.application_icon),
-        state = rememberWindowState(
-            size = preferredWindowSize(),
-            position = WindowPosition.Aligned(alignment = Alignment.Center)
-        ),
-        onCloseRequest = ::exitApplication
-    ) {
-        Main()
+fun main() {
+    configureDesktopPlatform()
+    FileKit.init(appId = "compose-multiplatform-xlog-decode")
+    application {
+        Window(
+            title = stringResource(resource = Res.string.app_name),
+            icon = painterResource(resource = Res.drawable.application_icon),
+            state = rememberWindowState(
+                size = preferredWindowSize(),
+                position = WindowPosition.Aligned(alignment = Alignment.Center)
+            ),
+            onCloseRequest = ::exitApplication
+        ) {
+            Main()
+        }
+    }
+}
+
+private fun configureDesktopPlatform() {
+    if (System.getProperty("os.name").equals("Mac OS X", ignoreCase = true)) {
+        System.setProperty("apple.awt.application.appearance", "system")
     }
 }
 

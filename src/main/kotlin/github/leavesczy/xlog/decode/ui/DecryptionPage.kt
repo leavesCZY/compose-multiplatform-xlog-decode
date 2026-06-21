@@ -219,7 +219,7 @@ private fun LogFilePath(
                 .clickable(onClick = {
                     coroutineScope.launch {
                         val files = FileKit.openFilePicker(
-                            type = FileKitType.File(extension = xLogFileExtension),
+                            type = xLogFilePickerType(),
                             mode = FileKitMode.Multiple()
                         )
                         val paths = files?.mapNotNull {
@@ -331,11 +331,24 @@ private fun Log(
 
 private const val xLogFileExtension = "xlog"
 
+private fun xLogFilePickerType(): FileKitType {
+    return if (isMacOS()) {
+        // macOS NSOpenPanel rejects non-system extensions like "xlog" when used as allowedFileTypes.
+        FileKitType.File()
+    } else {
+        FileKitType.File(extension = xLogFileExtension)
+    }
+}
+
+private fun isMacOS(): Boolean {
+    return System.getProperty("os.name").equals("Mac OS X", ignoreCase = true)
+}
+
 private fun Path.isXLogFile(): Boolean {
     val file = File(pathString)
     return file.isXLogFile()
 }
 
 private fun File.isXLogFile(): Boolean {
-    return exists() && isFile && extension == xLogFileExtension
+    return exists() && isFile && extension.equals(other = xLogFileExtension, ignoreCase = true)
 }

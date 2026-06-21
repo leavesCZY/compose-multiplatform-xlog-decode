@@ -4,12 +4,12 @@ jetbrains-compose-multiplatform = "1.11.1"
 
 jetbrains-compose-material3 = "1.11.0-alpha07"
 jetbrains-compose-material-icons-extended = "1.7.3"
-jetbrains-lifecycle-viewmodel-compose = "2.11.0-beta01"
+jetbrains-lifecycle-viewmodel-compose = "2.11.0-beta02"
 
 androidx-datastore = "1.2.1"
 
-luben-zstd-jni = "1.5.7-10"
-filekit-dialogs = "0.14.1"
+luben-zstd-jni = "1.5.7-11"
+filekit-dialogs = "0.14.2"
 bouncycastle-bcprov-jdk18on = "1.84"
 
 [plugins]

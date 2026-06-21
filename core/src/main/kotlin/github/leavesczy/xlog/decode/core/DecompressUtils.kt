@@ -22,16 +22,18 @@ internal object DecompressUtils {
     }
 
     fun zstdDecompress(data: ByteArray): ByteArray {
-        val byteArrayInputStream = ByteArrayInputStream(data)
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        val zstdInputStream = ZstdInputStream(byteArrayInputStream)
-        val bytes = ByteArray(1000000)
-        val bytesRead = zstdInputStream.read(bytes, 0, 1000000)
-        byteArrayOutputStream.write(bytes, 0, bytesRead)
-        zstdInputStream.close()
-        byteArrayInputStream.close()
-        byteArrayOutputStream.close()
-        return byteArrayOutputStream.toByteArray()
+        ByteArrayInputStream(data).use { input ->
+            ZstdInputStream(input).use { zstdInputStream ->
+                ByteArrayOutputStream().use { output ->
+                    val buffer = ByteArray(size = 8192)
+                    var bytesRead: Int
+                    while (zstdInputStream.read(buffer).also { bytesRead = it } != -1) {
+                        output.write(buffer, 0, bytesRead)
+                    }
+                    return output.toByteArray()
+                }
+            }
+        }
     }
 
 }

@@ -85,7 +85,7 @@ compose.desktop {
             macOS {
                 bundleID = mPackageName
                 setDockNameSameAsPackageName = true
-                appStore = true
+                appStore = false
                 iconFile.set(resourcesDir.resolve("macos_launch_icon.icns"))
             }
             linux {

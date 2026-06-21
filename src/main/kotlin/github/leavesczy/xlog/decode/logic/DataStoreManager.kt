@@ -17,7 +17,7 @@ import java.io.File
 object DataStoreManager {
 
     private val dataStores = PreferenceDataStoreFactory.create {
-        File("${System.getProperty("user.dir")}/config/compose-multiplatform-xlog-decode.preferences_pb")
+        File("${System.getProperty("user.home")}/.compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode.preferences_pb")
     }
 
     private val PRIVATE_KEY = stringPreferencesKey("private_key")

@@ -1,8 +1,6 @@
 package github.leavesczy.xlog.decode.core
 
-import java.io.DataInputStream
 import java.io.File
-import java.io.FileInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -72,15 +70,15 @@ class LogDecode(private val logger: Logger) {
             Magic.Length.byteSize
 
     fun decodeFile(privateKey: String, logFile: File, outFile: File) {
-        val logFileInputStream = FileInputStream(logFile)
-        val lodFileDataInputStream = DataInputStream(logFileInputStream)
-        val outFileBufferedWriter = outFile.outputStream().bufferedWriter()
-        try {
-            logger.debug {
-                "start parsing : " + logFile.path
-            }
-            val lofBuffer = ByteArray(lodFileDataInputStream.available())
-            lodFileDataInputStream.readFully(lofBuffer)
+        logger.debug {
+            "start parsing : " + logFile.path
+        }
+        val fileSize = logFile.length()
+        if (fileSize > Int.MAX_VALUE) {
+            throw IllegalArgumentException("Log file is too large: ${logFile.path}")
+        }
+        val lofBuffer = logFile.readBytes()
+        outFile.bufferedWriter().use { outFileBufferedWriter ->
             var lofBufferOffset = 0
             while (true) {
                 val logSpace = decodeLogSpace(
@@ -117,11 +115,6 @@ class LogDecode(private val logger: Logger) {
                         Magic.MagicEnd.byteSize
                 lofBufferOffset += logSpaceSize
             }
-            outFileBufferedWriter.flush()
-        } finally {
-            logFileInputStream.close()
-            lodFileDataInputStream.close()
-            outFileBufferedWriter.close()
         }
     }
 
