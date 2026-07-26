@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Key
-import androidx.compose.material.icons.outlined.Loop
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -158,8 +158,8 @@ private fun App() {
 
 private fun pageNavigation(page: Page): Pair<ImageVector, StringResource> {
     return when (page) {
-        Page.Decode -> Icons.Outlined.Loop to Res.string.decode
-        Page.SecretKey -> Icons.Outlined.Key to Res.string.secret_key
+        Page.Decode -> Icons.Outlined.Refresh to Res.string.decode
+        Page.SecretKey -> Icons.Outlined.Lock to Res.string.secret_key
         Page.Settings -> Icons.Outlined.Settings to Res.string.settings
     }
 }

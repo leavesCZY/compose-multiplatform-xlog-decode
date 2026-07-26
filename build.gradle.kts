@@ -24,11 +24,23 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(libs.jetbrains.compose.material3)
     implementation(libs.jetbrains.compose.components.resources)
-    implementation(libs.jetbrains.compose.material.icons.extended)
+    implementation(libs.jetbrains.compose.material.icons.core)
     implementation(libs.jetbrains.lifecycle.viewmodel.compose)
     implementation(libs.jetbrains.kotlinx.coroutines.swing)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.filekit.dialogs)
+}
+
+// ProGuard 7.8 ships kotlin-metadata that only reads ≤2.3; Kotlin 2.4 writes 2.4.0 modules.
+// Drop *.kotlin_module from jars so ProGuard can process release inputs.
+tasks.withType<Jar>().configureEach {
+    exclude("META-INF/*.kotlin_module")
+}
+
+subprojects {
+    tasks.withType<Jar>().configureEach {
+        exclude("META-INF/*.kotlin_module")
+    }
 }
 
 enum class OS {
@@ -98,10 +110,15 @@ compose.desktop {
         }
         buildTypes.release {
             proguard {
+                // Kotlin 2.4 metadata needs ProGuard ≥7.9.x (Compose default 7.8 maxes at 2.3).
+                version.set("7.9.1")
                 isEnabled.set(true)
+                // Obfuscate/shrink dependencies where safe; business code kept in proguard-rules.
                 obfuscate.set(true)
+                // Optimize other deps; Compose/Skiko protected via -keep,includecode.
                 optimize.set(true)
-                joinOutputJars.set(true)
+                // Must stay off: merging jars breaks BouncyCastle digests / META-INF.
+                joinOutputJars.set(false)
                 configurationFiles.from("proguard-rules.pro")
             }
         }
