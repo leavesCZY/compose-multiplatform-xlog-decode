@@ -6,9 +6,9 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import github.leavesczy.xlog.decode.logic.Theme
+import github.leavesczy.xlog.decode.logic.ThemeMode
 
-private val Typography = Typography()
+private val AppTypography = Typography()
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -88,30 +88,17 @@ private val darkScheme = darkColorScheme(
 
 @Composable
 fun AppTheme(
-    theme: Theme,
+    themeMode: ThemeMode,
     content: @Composable () -> Unit
 ) {
-    val darkTheme = when (theme) {
-        Theme.System -> {
-            isSystemInDarkTheme()
-        }
-
-        Theme.Light -> {
-            false
-        }
-
-        Theme.Dark -> {
-            true
-        }
-    }
-    val colors = if (darkTheme) {
-        darkScheme
-    } else {
-        lightScheme
+    val darkTheme = when (themeMode) {
+        ThemeMode.System -> isSystemInDarkTheme()
+        ThemeMode.Light -> false
+        ThemeMode.Dark -> true
     }
     MaterialTheme(
-        colorScheme = colors,
-        typography = Typography,
+        colorScheme = if (darkTheme) darkScheme else lightScheme,
+        typography = AppTypography,
         content = content
     )
 }

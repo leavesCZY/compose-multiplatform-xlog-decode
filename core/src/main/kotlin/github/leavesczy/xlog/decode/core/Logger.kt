@@ -1,14 +1,9 @@
 package github.leavesczy.xlog.decode.core
 
-/**
- * @Author: leavesCZY
- * @Date: 2024/6/4 14:17
- * @Desc:
- */
 interface Logger {
 
-    fun debug(log: () -> String)
+    fun debug(message: () -> String)
 
-    fun error(log: () -> String)
+    fun error(message: () -> String)
 
 }

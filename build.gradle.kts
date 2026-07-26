@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.jetbrains.compose.components.resources)
     implementation(libs.jetbrains.compose.material.icons.extended)
     implementation(libs.jetbrains.lifecycle.viewmodel.compose)
+    implementation(libs.jetbrains.kotlinx.coroutines.swing)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.filekit.dialogs)
 }
@@ -33,13 +34,13 @@ dependencies {
 enum class OS {
     Linux,
     Windows,
-    MacOS;
+    MacOs;
 }
 
 val currentOS: OS by lazy {
-    val os = System.getProperty("os.name")
+    val os = System.getProperty("os.name").orEmpty()
     when {
-        os.equals("Mac OS X", ignoreCase = true) -> OS.MacOS
+        os.equals("Mac OS X", ignoreCase = true) -> OS.MacOs
         os.startsWith("Win", ignoreCase = true) -> OS.Windows
         os.startsWith("Linux", ignoreCase = true) -> OS.Linux
         else -> error("Unknown OS name: $os")
@@ -49,7 +50,7 @@ val currentOS: OS by lazy {
 compose.desktop {
     application {
         mainClass = "github.leavesczy.xlog.decode.MainKt"
-        val mPackageName = "compose-multiplatform-xlog-decode"
+        val appPackageName = "compose-multiplatform-xlog-decode"
         nativeDistributions {
             includeAllModules = false
             modules = arrayListOf("jdk.unsupported", "java.desktop", "java.logging")
@@ -58,7 +59,7 @@ compose.desktop {
                     targetFormats(TargetFormat.AppImage, TargetFormat.Exe)
                 }
 
-                OS.MacOS -> {
+                OS.MacOs -> {
                     targetFormats(TargetFormat.Dmg)
                 }
 
@@ -66,12 +67,12 @@ compose.desktop {
                     targetFormats(TargetFormat.Deb, TargetFormat.Rpm)
                 }
             }
-            packageName = mPackageName
+            packageName = appPackageName
             packageVersion = "1.0.0"
             description = "compose multiplatform xlog decode"
             copyright = "© 2024 leavesCZY. All rights reserved."
             vendor = "leavesCZY"
-            val resourcesDir = project.file("src/main/resources")
+            val packagingIconsDir = project.file("packaging/icons")
             windows {
                 menuGroup = packageName
                 dirChooser = true
@@ -79,19 +80,19 @@ compose.desktop {
                 shortcut = true
                 menu = true
                 upgradeUuid = "D542171E-5CDC-428E-BF21-68FBAD85369F"
-                iconFile.set(resourcesDir.resolve("windows_launch_icon.ico"))
+                iconFile.set(packagingIconsDir.resolve("windows_launch_icon.ico"))
                 installationPath = packageName
             }
             macOS {
-                bundleID = mPackageName
+                bundleID = appPackageName
                 setDockNameSameAsPackageName = true
                 appStore = false
-                iconFile.set(resourcesDir.resolve("macos_launch_icon.icns"))
+                iconFile.set(packagingIconsDir.resolve("macos_launch_icon.icns"))
             }
             linux {
                 shortcut = true
-                menuGroup = mPackageName
-                iconFile.set(resourcesDir.resolve("linux_launch_icon.png"))
+                menuGroup = appPackageName
+                iconFile.set(packagingIconsDir.resolve("linux_launch_icon.png"))
                 modules("jdk.security.auth")
             }
         }

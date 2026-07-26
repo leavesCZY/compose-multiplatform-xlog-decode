@@ -35,12 +35,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import compose_multiplatform_xlog_decode.generated.resources.Res
 import compose_multiplatform_xlog_decode.generated.resources.app_name
 import compose_multiplatform_xlog_decode.generated.resources.application_icon
-import compose_multiplatform_xlog_decode.generated.resources.decryption
+import compose_multiplatform_xlog_decode.generated.resources.decode
 import compose_multiplatform_xlog_decode.generated.resources.secret_key
 import compose_multiplatform_xlog_decode.generated.resources.settings
-import github.leavesczy.xlog.decode.logic.LogDecodeViewModel
+import github.leavesczy.xlog.decode.logic.MainViewModel
 import github.leavesczy.xlog.decode.logic.Page
-import github.leavesczy.xlog.decode.ui.DecryptionPage
+import github.leavesczy.xlog.decode.platform.DesktopOs
+import github.leavesczy.xlog.decode.ui.DecodePage
 import github.leavesczy.xlog.decode.ui.SecretKeyPage
 import github.leavesczy.xlog.decode.ui.SettingsPage
 import github.leavesczy.xlog.decode.ui.theme.AppTheme
@@ -50,14 +51,11 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import java.awt.Toolkit
 
-/**
- * @Author: leavesCZY
- * @Date: 2024/6/5 16:54
- * @Desc:
- */
+private const val APP_ID = "compose-multiplatform-xlog-decode"
+
 fun main() {
     configureDesktopPlatform()
-    FileKit.init(appId = "compose-multiplatform-xlog-decode")
+    FileKit.init(appId = APP_ID)
     application {
         Window(
             title = stringResource(resource = Res.string.app_name),
@@ -68,35 +66,29 @@ fun main() {
             ),
             onCloseRequest = ::exitApplication
         ) {
-            Main()
+            App()
         }
     }
 }
 
 private fun configureDesktopPlatform() {
-    if (System.getProperty("os.name").equals("Mac OS X", ignoreCase = true)) {
+    if (DesktopOs.isMacOs) {
         System.setProperty("apple.awt.application.appearance", "system")
     }
 }
 
 @Composable
-private fun Main() {
-    val logDecodeViewModel = viewModel {
-        LogDecodeViewModel()
+private fun App() {
+    val mainViewModel = viewModel {
+        MainViewModel()
     }
     val coroutineScope = rememberCoroutineScope()
-    AppTheme(theme = logDecodeViewModel.settingsPageViewState.theme) {
-        val snackBarHostState = remember {
-            SnackbarHostState()
-        }
+    AppTheme(themeMode = mainViewModel.settingsPageViewState.themeMode) {
+        val snackbarHostState = remember { SnackbarHostState() }
         Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             snackbarHost = {
-                SnackbarHost(
-                    modifier = Modifier,
-                    hostState = snackBarHostState
-                )
+                SnackbarHost(hostState = snackbarHostState)
             }
         ) { padding ->
             Row(
@@ -106,85 +98,69 @@ private fun Main() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 NavigationRail(
-                    modifier = Modifier
-                        .fillMaxHeight(),
+                    modifier = Modifier.fillMaxHeight(),
                     containerColor = MaterialTheme.colorScheme.background
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxHeight(),
+                        modifier = Modifier.fillMaxHeight(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(
                             space = 24.dp,
                             alignment = Alignment.CenterVertically
                         )
                     ) {
-                        for (page in Page.entries) {
-                            val icon: ImageVector
-                            val title: StringResource
-                            when (page) {
-                                Page.Decryption -> {
-                                    icon = Icons.Outlined.Loop
-                                    title = Res.string.decryption
-                                }
-
-                                Page.SecretKey -> {
-                                    icon = Icons.Outlined.Key
-                                    title = Res.string.secret_key
-                                }
-
-                                Page.Settings -> {
-                                    icon = Icons.Outlined.Settings
-                                    title = Res.string.settings
-                                }
-                            }
+                        Page.entries.forEach { page ->
+                            val (icon, title) = pageNavigation(page = page)
                             NavigationRailItem(
-                                modifier = Modifier,
-                                selected = logDecodeViewModel.mainPageViewState.page == page,
+                                selected = mainViewModel.mainPageViewState.page == page,
                                 label = {
-                                    Text(
-                                        modifier = Modifier,
-                                        text = stringResource(resource = title)
-                                    )
+                                    Text(text = stringResource(resource = title))
                                 },
                                 icon = {
                                     Icon(
-                                        modifier = Modifier
-                                            .size(size = 22.dp),
+                                        modifier = Modifier.size(size = 22.dp),
                                         imageVector = icon,
                                         contentDescription = stringResource(resource = title)
                                     )
                                 },
                                 onClick = {
-                                    logDecodeViewModel.mainPageViewState.switchPage(page)
+                                    mainViewModel.mainPageViewState.onPageSelected(page)
                                 }
                             )
                         }
                     }
                 }
-                when (logDecodeViewModel.mainPageViewState.page) {
-                    Page.Decryption -> {
-                        DecryptionPage(
-                            pageViewState = logDecodeViewModel.decryptionPageViewState,
-                            snackBarHostState = snackBarHostState,
+                when (mainViewModel.mainPageViewState.page) {
+                    Page.Decode -> {
+                        DecodePage(
+                            pageViewState = mainViewModel.decodePageViewState,
+                            snackbarHostState = snackbarHostState,
                             coroutineScope = coroutineScope
                         )
                     }
 
                     Page.SecretKey -> {
                         SecretKeyPage(
-                            pageViewState = logDecodeViewModel.secretKeyPageViewState
+                            pageViewState = mainViewModel.secretKeyPageViewState
                         )
                     }
 
                     Page.Settings -> {
                         SettingsPage(
-                            pageViewState = logDecodeViewModel.settingsPageViewState
+                            pageViewState = mainViewModel.settingsPageViewState
                         )
                     }
                 }
             }
         }
+    }
+}
+
+private fun pageNavigation(page: Page): Pair<ImageVector, StringResource> {
+    return when (page) {
+        Page.Decode -> Icons.Outlined.Loop to Res.string.decode
+        Page.SecretKey -> Icons.Outlined.Key to Res.string.secret_key
+        Page.Settings -> Icons.Outlined.Settings to Res.string.settings
     }
 }
 

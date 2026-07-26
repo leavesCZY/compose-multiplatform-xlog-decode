@@ -16,17 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import compose_multiplatform_xlog_decode.generated.resources.Res
-import compose_multiplatform_xlog_decode.generated.resources.generate_the_key_pair
+import compose_multiplatform_xlog_decode.generated.resources.generate_key_pair
 import compose_multiplatform_xlog_decode.generated.resources.private_key
 import compose_multiplatform_xlog_decode.generated.resources.public_key
 import github.leavesczy.xlog.decode.logic.SecretKeyPageViewState
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * @Author: leavesCZY
- * @Date: 2024/6/4 14:31
- * @Desc:
- */
 @Composable
 fun SecretKeyPage(pageViewState: SecretKeyPageViewState) {
     Column(
@@ -37,14 +32,12 @@ fun SecretKeyPage(pageViewState: SecretKeyPageViewState) {
         verticalArrangement = Arrangement.spacedBy(space = 24.dp)
     ) {
         ReadOnlyTextField(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             value = pageViewState.privateKey,
             label = stringResource(resource = Res.string.private_key)
         )
         ReadOnlyTextField(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             value = pageViewState.publicKey,
             label = stringResource(resource = Res.string.public_key)
         )
@@ -52,12 +45,9 @@ fun SecretKeyPage(pageViewState: SecretKeyPageViewState) {
             modifier = Modifier
                 .fillMaxWidth(fraction = 0.4f)
                 .height(height = 45.dp),
-            onClick = pageViewState.generateTheKeyPair
+            onClick = pageViewState.onGenerateKeyPair
         ) {
-            Text(
-                modifier = Modifier,
-                text = stringResource(resource = Res.string.generate_the_key_pair)
-            )
+            Text(text = stringResource(resource = Res.string.generate_key_pair))
         }
     }
 }
@@ -69,16 +59,12 @@ private fun ReadOnlyTextField(
     value: String
 ) {
     OutlinedTextField(
-        modifier = modifier
-            .animateContentSize(),
+        modifier = modifier.animateContentSize(),
         value = value,
         readOnly = true,
         shape = RoundedCornerShape(size = 18.dp),
         label = {
-            Text(
-                modifier = Modifier,
-                text = label
-            )
+            Text(text = label)
         },
         onValueChange = {}
     )

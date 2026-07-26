@@ -1,16 +1,17 @@
 [versions]
-jetbrains-kotlin = "2.4.0"
+jetbrains-kotlin = "2.4.10"
 jetbrains-compose-multiplatform = "1.11.1"
 
-jetbrains-compose-material3 = "1.11.0-alpha07"
+jetbrains-compose-material3 = "1.12.0-alpha03"
 jetbrains-compose-material-icons-extended = "1.7.3"
-jetbrains-lifecycle-viewmodel-compose = "2.11.0-beta02"
+jetbrains-lifecycle-viewmodel-compose = "2.11.0"
+jetbrains-kotlinx-coroutines = "1.11.0"
 
 androidx-datastore = "1.2.1"
 
 luben-zstd-jni = "1.5.7-11"
 filekit-dialogs = "0.14.2"
-bouncycastle-bcprov-jdk18on = "1.84"
+bouncycastle-bcprov-jdk18on = "1.85"
 
 [plugins]
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrains-kotlin" }
@@ -22,6 +23,7 @@ jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:materi
 jetbrains-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "jetbrains-compose-multiplatform" }
 jetbrains-compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "jetbrains-compose-material-icons-extended" }
 jetbrains-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle-viewmodel-compose" }
+jetbrains-kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "jetbrains-kotlinx-coroutines" }
 
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
 

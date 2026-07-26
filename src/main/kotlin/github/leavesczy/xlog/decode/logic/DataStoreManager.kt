@@ -9,57 +9,59 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File
 
-/**
- * @Author: leavesCZY
- * @Date: 2024/6/6 15:47
- * @Desc:
- */
 object DataStoreManager {
 
-    private val dataStores = PreferenceDataStoreFactory.create {
-        File("${System.getProperty("user.home")}/.compose-multiplatform-xlog-decode/compose-multiplatform-xlog-decode.preferences_pb")
+    private const val PREFERENCES_DIR_NAME = ".compose-multiplatform-xlog-decode"
+
+    private const val PREFERENCES_FILE_NAME = "compose-multiplatform-xlog-decode.preferences_pb"
+
+    private val dataStore = PreferenceDataStoreFactory.create {
+        File(
+            System.getProperty("user.home"),
+            "$PREFERENCES_DIR_NAME/$PREFERENCES_FILE_NAME"
+        )
     }
 
     private val PRIVATE_KEY = stringPreferencesKey("private_key")
 
-    private val THEME = intPreferencesKey("theme")
+    private val THEME_ID = intPreferencesKey("theme")
 
-    private val AUTO_OPEN_FILE_WHEN_PARSING_IS_SUCCESSFUL =
+    private val AUTO_OPEN_ON_SUCCESS =
         booleanPreferencesKey("autoOpenFileWhenParsingIsSuccessful")
 
     fun privateKeyFlow(): Flow<String> {
-        return dataStores.data.map { preferences ->
-            preferences[PRIVATE_KEY] ?: ""
+        return dataStore.data.map { preferences ->
+            preferences[PRIVATE_KEY].orEmpty()
         }
     }
 
-    fun themeFlow(): Flow<Int> {
-        return dataStores.data.map { preferences ->
-            preferences[THEME] ?: -1
+    fun themeIdFlow(): Flow<Int> {
+        return dataStore.data.map { preferences ->
+            preferences[THEME_ID] ?: -1
         }
     }
 
-    fun autoOpenFileWhenParsingIsSuccessful(): Flow<Boolean> {
-        return dataStores.data.map { preferences ->
-            preferences[AUTO_OPEN_FILE_WHEN_PARSING_IS_SUCCESSFUL] ?: true
+    fun autoOpenOnSuccessFlow(): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[AUTO_OPEN_ON_SUCCESS] ?: true
         }
     }
 
     suspend fun updatePrivateKey(privateKey: String) {
-        dataStores.edit { settings ->
-            settings[PRIVATE_KEY] = privateKey
+        dataStore.edit { preferences ->
+            preferences[PRIVATE_KEY] = privateKey
         }
     }
 
-    suspend fun updateTheme(theme: Int) {
-        dataStores.edit { settings ->
-            settings[THEME] = theme
+    suspend fun updateThemeId(themeId: Int) {
+        dataStore.edit { preferences ->
+            preferences[THEME_ID] = themeId
         }
     }
 
-    suspend fun autoOpenFileWhenParsingIsSuccessful(autoOpen: Boolean) {
-        dataStores.edit { settings ->
-            settings[AUTO_OPEN_FILE_WHEN_PARSING_IS_SUCCESSFUL] = autoOpen
+    suspend fun updateAutoOpenOnSuccess(autoOpen: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[AUTO_OPEN_ON_SUCCESS] = autoOpen
         }
     }
 

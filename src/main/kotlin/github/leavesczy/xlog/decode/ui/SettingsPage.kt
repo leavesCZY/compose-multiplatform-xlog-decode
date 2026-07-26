@@ -15,22 +15,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import compose_multiplatform_xlog_decode.generated.resources.Res
-import compose_multiplatform_xlog_decode.generated.resources.the_file_will_be_automatically_opened_after_successful_parsing
+import compose_multiplatform_xlog_decode.generated.resources.auto_open_file_on_success
 import compose_multiplatform_xlog_decode.generated.resources.theme
+import compose_multiplatform_xlog_decode.generated.resources.theme_dark
+import compose_multiplatform_xlog_decode.generated.resources.theme_light
+import compose_multiplatform_xlog_decode.generated.resources.theme_system
 import github.leavesczy.xlog.decode.logic.SettingsPageViewState
-import github.leavesczy.xlog.decode.logic.Theme
+import github.leavesczy.xlog.decode.logic.ThemeMode
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * @Author: leavesCZY
- * @Date: 2024/6/4 14:16
- * @Desc:
- */
 @Composable
 fun SettingsPage(pageViewState: SettingsPageViewState) {
     Column(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(
             space = 20.dp,
@@ -38,58 +35,55 @@ fun SettingsPage(pageViewState: SettingsPageViewState) {
         )
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 space = 20.dp,
                 alignment = Alignment.CenterHorizontally
             )
         ) {
-            Text(
-                modifier = Modifier,
-                text = stringResource(resource = Res.string.theme)
-            )
+            Text(text = stringResource(resource = Res.string.theme))
             SingleChoiceSegmentedButtonRow(
-                modifier = Modifier,
                 space = (-20).dp
             ) {
-                Theme.entries.forEach {
+                ThemeMode.entries.forEach { themeMode ->
                     SegmentedButton(
-                        modifier = Modifier,
-                        selected = it == pageViewState.theme,
+                        selected = themeMode == pageViewState.themeMode,
                         shape = RoundedCornerShape(size = 20.dp),
                         label = {
-                            Text(
-                                modifier = Modifier,
-                                text = it.name
-                            )
+                            Text(text = themeModeLabel(themeMode = themeMode))
                         },
                         onClick = {
-                            pageViewState.switchTheme(it)
+                            pageViewState.onThemeModeSelected(themeMode)
                         }
                     )
                 }
             }
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 space = 20.dp,
                 alignment = Alignment.CenterHorizontally
             )
         ) {
-            Text(
-                modifier = Modifier,
-                text = stringResource(resource = Res.string.the_file_will_be_automatically_opened_after_successful_parsing)
-            )
+            Text(text = stringResource(resource = Res.string.auto_open_file_on_success))
             Switch(
-                modifier = Modifier,
-                checked = pageViewState.autoOpenFileWhenParsingIsSuccessful,
-                onCheckedChange = pageViewState.updateAutoOpenFileWhenParsingIsSuccessful
+                checked = pageViewState.autoOpenOnSuccess,
+                onCheckedChange = pageViewState.onAutoOpenOnSuccessChanged
             )
         }
     }
+}
+
+@Composable
+private fun themeModeLabel(themeMode: ThemeMode): String {
+    return stringResource(
+        resource = when (themeMode) {
+            ThemeMode.System -> Res.string.theme_system
+            ThemeMode.Light -> Res.string.theme_light
+            ThemeMode.Dark -> Res.string.theme_dark
+        }
+    )
 }

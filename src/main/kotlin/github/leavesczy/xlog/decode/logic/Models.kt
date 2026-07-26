@@ -4,52 +4,58 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Stable
 import java.io.File
 
-/**
- * @Author: leavesCZY
- * @Date: 2024/6/4 14:15
- * @Desc:
- */
 enum class Page {
-    Decryption,
+    Decode,
     SecretKey,
-    Settings;
+    Settings
 }
 
-enum class Theme(val type: Int) {
-    System(type = 0),
-    Light(type = 1),
-    Dark(type = 2);
+enum class ThemeMode(val id: Int) {
+    System(id = 0),
+    Light(id = 1),
+    Dark(id = 2);
+
+    companion object {
+        fun fromId(id: Int): ThemeMode? {
+            return entries.find { it.id == id }
+        }
+    }
 }
+
+data class RuntimeLogEntry(
+    val id: Long,
+    val message: String
+)
 
 @Stable
 data class MainPageViewState(
     val page: Page,
-    val switchPage: (Page) -> Unit
+    val onPageSelected: (Page) -> Unit
 )
 
 @Stable
-data class DecryptionPageViewState(
+data class DecodePageViewState(
     val privateKey: String,
     val selectedLogFiles: List<String>,
-    val runtimeLogs: List<String>,
+    val runtimeLogs: List<RuntimeLogEntry>,
     val lazyListState: LazyListState,
-    val onInputPrivateKey: (String) -> Unit,
-    val onLogFileIsSelected: (List<String>) -> Unit,
-    val decodeLog: suspend () -> List<File>?,
-    val openFile: suspend (List<File>) -> Unit
+    val onPrivateKeyChanged: (String) -> Unit,
+    val onLogFilesSelected: (List<String>) -> Unit,
+    val onDecodeLogs: suspend () -> List<File>,
+    val onOpenFiles: suspend (List<File>) -> Unit
 )
 
 @Stable
 data class SecretKeyPageViewState(
     val privateKey: String,
     val publicKey: String,
-    val generateTheKeyPair: () -> Unit
+    val onGenerateKeyPair: () -> Unit
 )
 
 @Stable
 data class SettingsPageViewState(
-    val theme: Theme,
-    val switchTheme: (Theme) -> Unit,
-    val autoOpenFileWhenParsingIsSuccessful: Boolean,
-    val updateAutoOpenFileWhenParsingIsSuccessful: (Boolean) -> Unit
+    val themeMode: ThemeMode,
+    val onThemeModeSelected: (ThemeMode) -> Unit,
+    val autoOpenOnSuccess: Boolean,
+    val onAutoOpenOnSuccessChanged: (Boolean) -> Unit
 )
