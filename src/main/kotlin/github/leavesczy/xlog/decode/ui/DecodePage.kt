@@ -122,7 +122,10 @@ fun DecodePage(
                 }
             }
         ) {
-            Text(text = stringResource(resource = Res.string.parse_the_file))
+            Text(
+                modifier = Modifier,
+                text = stringResource(resource = Res.string.parse_the_file)
+            )
         }
         RuntimeLogList(
             logs = pageViewState.runtimeLogs,
@@ -157,7 +160,10 @@ private fun LogFileSelector(
             }
         }
     }
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -214,11 +220,13 @@ private fun PrivateKeyField(
     onPrivateKeyChanged: (String) -> Unit
 ) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         value = privateKey,
         shape = RoundedCornerShape(size = 18.dp),
         label = {
             Text(
+                modifier = Modifier,
                 text = stringResource(resource = Res.string.if_the_log_is_encrypted_the_private_key_needs_to_be_entered)
             )
         },
@@ -231,14 +239,18 @@ private fun RuntimeLogList(
     logs: List<RuntimeLogEntry>,
     lazyListState: LazyListState
 ) {
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
         SelectionContainer(
             modifier = Modifier
                 .align(alignment = Alignment.TopCenter)
                 .fillMaxWidth()
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 state = lazyListState,
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(
@@ -249,11 +261,16 @@ private fun RuntimeLogList(
             ) {
                 itemsIndexed(
                     items = logs,
-                    key = { _, entry -> entry.id },
-                    contentType = { _, _ -> "RuntimeLog" }
+                    key = { _, entry ->
+                        entry.id
+                    },
+                    contentType = { _, _ ->
+                        "RuntimeLog"
+                    }
                 ) { _, entry ->
                     RuntimeLogItem(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         log = entry.message
                     )
                 }

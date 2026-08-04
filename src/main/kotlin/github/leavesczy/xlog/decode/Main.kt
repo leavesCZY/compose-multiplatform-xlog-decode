@@ -20,11 +20,14 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -49,9 +52,15 @@ import io.github.vinceglb.filekit.FileKit
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import java.awt.Toolkit
+import java.awt.Dimension
+import java.awt.GraphicsEnvironment
 
 private const val APP_ID = "compose-multiplatform-xlog-decode"
+
+private val MinWindowWidth = 720.dp
+private val MinWindowHeight = 520.dp
+private val DefaultWindowWidth = 1120.dp
+private val DefaultWindowHeight = 740.dp
 
 fun main() {
     configureDesktopPlatform()
@@ -66,6 +75,15 @@ fun main() {
             ),
             onCloseRequest = ::exitApplication
         ) {
+            val density = LocalDensity.current
+            SideEffect {
+                window.minimumSize = with(density) {
+                    Dimension(
+                        MinWindowWidth.roundToPx(),
+                        MinWindowHeight.roundToPx()
+                    )
+                }
+            }
             App()
         }
     }
@@ -165,9 +183,33 @@ private fun pageNavigation(page: Page): Pair<ImageVector, StringResource> {
 }
 
 private fun preferredWindowSize(): DpSize {
-    val aspectRatio = 1.72f
-    val screenSize = Toolkit.getDefaultToolkit().screenSize
-    val preferredHeight = screenSize.height * 0.60f
-    val preferredWidth = minOf(a = screenSize.width * 0.70f, b = preferredHeight * aspectRatio)
-    return DpSize(width = preferredWidth.dp, height = preferredHeight.dp)
+    val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
+    val availableBounds = graphicsEnvironment.maximumWindowBounds
+    val density = graphicsEnvironment.defaultScreenDevice
+        .defaultConfiguration
+        .defaultTransform
+        .scaleX
+        .toFloat()
+        .coerceAtLeast(minimumValue = 1f)
+    val availableWidthDp = availableBounds.width / density
+    val availableHeightDp = availableBounds.height / density
+    val width = fitWindowDimension(
+        preferred = DefaultWindowWidth,
+        min = MinWindowWidth,
+        available = availableWidthDp
+    )
+    val height = fitWindowDimension(
+        preferred = DefaultWindowHeight,
+        min = MinWindowHeight,
+        available = availableHeightDp
+    )
+    return DpSize(width = width, height = height)
+}
+
+private fun fitWindowDimension(preferred: Dp, min: Dp, available: Float): Dp {
+    val maxSize = available * 0.80f
+    val minSize = minOf(a = min.value, b = available * 0.95f)
+    return minOf(a = preferred.value, b = maxSize)
+        .coerceAtLeast(minimumValue = minSize)
+        .dp
 }

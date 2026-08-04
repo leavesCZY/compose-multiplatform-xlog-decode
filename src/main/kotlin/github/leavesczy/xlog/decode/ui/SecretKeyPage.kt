@@ -32,12 +32,14 @@ fun SecretKeyPage(pageViewState: SecretKeyPageViewState) {
         verticalArrangement = Arrangement.spacedBy(space = 24.dp)
     ) {
         ReadOnlyTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             value = pageViewState.privateKey,
             label = stringResource(resource = Res.string.private_key)
         )
         ReadOnlyTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             value = pageViewState.publicKey,
             label = stringResource(resource = Res.string.public_key)
         )
@@ -47,7 +49,10 @@ fun SecretKeyPage(pageViewState: SecretKeyPageViewState) {
                 .height(height = 45.dp),
             onClick = pageViewState.onGenerateKeyPair
         ) {
-            Text(text = stringResource(resource = Res.string.generate_key_pair))
+            Text(
+                modifier = Modifier,
+                text = stringResource(resource = Res.string.generate_key_pair)
+            )
         }
     }
 }
@@ -59,13 +64,19 @@ private fun ReadOnlyTextField(
     value: String
 ) {
     OutlinedTextField(
-        modifier = modifier.animateContentSize(),
+        modifier = modifier
+            .animateContentSize(),
         value = value,
         readOnly = true,
         shape = RoundedCornerShape(size = 18.dp),
         label = {
-            Text(text = label)
+            Text(
+                modifier = Modifier,
+                text = label
+            )
         },
-        onValueChange = {}
+        onValueChange = {
+
+        }
     )
 }

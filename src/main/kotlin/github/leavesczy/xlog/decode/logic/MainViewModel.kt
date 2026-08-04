@@ -32,7 +32,7 @@ class MainViewModel : ViewModel() {
         private const val RUNTIME_LOG_MAX_SIZE = 500
         private const val RUNTIME_LOG_FLUSH_INTERVAL_MS = 100L
         private const val PRIVATE_KEY_PERSIST_DEBOUNCE_MS = 400L
-        private const val OUTPUT_FILE_TIME_PATTERN = "yyyyMMdd_HHmmssSSS"
+        private const val OUTPUT_FILE_TIME_PATTERN = "yyyyMMdd_HHmmss_SSS"
         private const val LOG_SEPARATOR =
             "-----------------------------------------------------------------------"
     }

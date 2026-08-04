@@ -119,11 +119,10 @@ object CryptoUtils {
     }
 
     private fun readUInt32LittleEndian(bytes: ByteArray, offset: Int): Long {
-        return (
-                (bytes[offset].toInt() and 0xFF) or
-                        ((bytes[offset + 1].toInt() and 0xFF) shl 8) or
-                        ((bytes[offset + 2].toInt() and 0xFF) shl 16) or
-                        ((bytes[offset + 3].toInt() and 0xFF) shl 24)
+        return ((bytes[offset].toInt() and 0xFF) or
+                ((bytes[offset + 1].toInt() and 0xFF) shl 8) or
+                ((bytes[offset + 2].toInt() and 0xFF) shl 16) or
+                ((bytes[offset + 3].toInt() and 0xFF) shl 24)
                 ).toLong() and UINT32_MASK
     }
 

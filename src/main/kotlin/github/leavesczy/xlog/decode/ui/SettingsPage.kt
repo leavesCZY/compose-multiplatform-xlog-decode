@@ -27,7 +27,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SettingsPage(pageViewState: SettingsPageViewState) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(
             space = 20.dp,
@@ -35,15 +36,20 @@ fun SettingsPage(pageViewState: SettingsPageViewState) {
         )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 space = 20.dp,
                 alignment = Alignment.CenterHorizontally
             )
         ) {
-            Text(text = stringResource(resource = Res.string.theme))
+            Text(
+                modifier = Modifier,
+                text = stringResource(resource = Res.string.theme)
+            )
             SingleChoiceSegmentedButtonRow(
+                modifier = Modifier,
                 space = (-20).dp
             ) {
                 ThemeMode.entries.forEach { themeMode ->
@@ -51,7 +57,10 @@ fun SettingsPage(pageViewState: SettingsPageViewState) {
                         selected = themeMode == pageViewState.themeMode,
                         shape = RoundedCornerShape(size = 20.dp),
                         label = {
-                            Text(text = themeModeLabel(themeMode = themeMode))
+                            Text(
+                                modifier = Modifier,
+                                text = themeModeLabel(themeMode = themeMode)
+                            )
                         },
                         onClick = {
                             pageViewState.onThemeModeSelected(themeMode)
@@ -61,15 +70,20 @@ fun SettingsPage(pageViewState: SettingsPageViewState) {
             }
         }
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 space = 20.dp,
                 alignment = Alignment.CenterHorizontally
             )
         ) {
-            Text(text = stringResource(resource = Res.string.auto_open_file_on_success))
+            Text(
+                modifier = Modifier,
+                text = stringResource(resource = Res.string.auto_open_file_on_success)
+            )
             Switch(
+                modifier = Modifier,
                 checked = pageViewState.autoOpenOnSuccess,
                 onCheckedChange = pageViewState.onAutoOpenOnSuccessChanged
             )
