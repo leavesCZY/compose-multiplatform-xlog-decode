@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRail
@@ -25,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
@@ -39,6 +34,9 @@ import compose_multiplatform_xlog_decode.generated.resources.Res
 import compose_multiplatform_xlog_decode.generated.resources.app_name
 import compose_multiplatform_xlog_decode.generated.resources.application_icon
 import compose_multiplatform_xlog_decode.generated.resources.decode
+import compose_multiplatform_xlog_decode.generated.resources.ic_decode
+import compose_multiplatform_xlog_decode.generated.resources.ic_lock
+import compose_multiplatform_xlog_decode.generated.resources.ic_settings
 import compose_multiplatform_xlog_decode.generated.resources.secret_key
 import compose_multiplatform_xlog_decode.generated.resources.settings
 import github.leavesczy.xlog.decode.logic.MainViewModel
@@ -49,6 +47,7 @@ import github.leavesczy.xlog.decode.ui.SecretKeyPage
 import github.leavesczy.xlog.decode.ui.SettingsPage
 import github.leavesczy.xlog.decode.ui.theme.AppTheme
 import io.github.vinceglb.filekit.FileKit
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -137,7 +136,7 @@ private fun App() {
                                 icon = {
                                     Icon(
                                         modifier = Modifier.size(size = 22.dp),
-                                        imageVector = icon,
+                                        painter = painterResource(resource = icon),
                                         contentDescription = stringResource(resource = title)
                                     )
                                 },
@@ -174,11 +173,11 @@ private fun App() {
     }
 }
 
-private fun pageNavigation(page: Page): Pair<ImageVector, StringResource> {
+private fun pageNavigation(page: Page): Pair<DrawableResource, StringResource> {
     return when (page) {
-        Page.Decode -> Icons.Outlined.Refresh to Res.string.decode
-        Page.SecretKey -> Icons.Outlined.Lock to Res.string.secret_key
-        Page.Settings -> Icons.Outlined.Settings to Res.string.settings
+        Page.Decode -> Res.drawable.ic_decode to Res.string.decode
+        Page.SecretKey -> Res.drawable.ic_lock to Res.string.secret_key
+        Page.Settings -> Res.drawable.ic_settings to Res.string.settings
     }
 }
 

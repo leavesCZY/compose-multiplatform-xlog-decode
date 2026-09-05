@@ -24,7 +24,6 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(libs.jetbrains.compose.material3)
     implementation(libs.jetbrains.compose.components.resources)
-    implementation(libs.jetbrains.compose.material.icons.core)
     implementation(libs.jetbrains.lifecycle.viewmodel.compose)
     implementation(libs.jetbrains.kotlinx.coroutines.swing)
     implementation(libs.androidx.datastore.preferences.core)
