@@ -5,10 +5,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 fun main() {
-    val privateKey = "fc0ef8f6f96159c94482acee862379496f93b15b4b9cf7389284f6f1fb5b9a94"
-    val zlibNoCryptLogFile = File("core/log/AppednerModeAsync_ZLIB_NoCrypt.xlog")
+    val privateKey = "919d6db64ca824564faee699add7ce37cc7e82dda159057577798027bc59588d"
+    val zlibNoCryptLogFile = File("core/log/AppenderModeAsync_ZLIB_NoCrypt.xlog")
     decodeSampleFile(logFile = zlibNoCryptLogFile, privateKey = "")
-    val zlibHasCryptLogFile = File("core/log/AppednerModeAsync_ZLIB_HasCrypt.xlog")
+    val zlibHasCryptLogFile = File("core/log/AppenderModeAsync_ZLIB_HasCrypt.xlog")
     decodeSampleFile(logFile = zlibHasCryptLogFile, privateKey = privateKey)
 }
 

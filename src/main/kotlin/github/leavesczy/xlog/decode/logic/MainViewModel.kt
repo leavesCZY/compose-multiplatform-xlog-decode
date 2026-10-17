@@ -72,7 +72,7 @@ class MainViewModel : ViewModel() {
         value = SettingsPageViewState(
             themeMode = ThemeMode.Light,
             onThemeModeSelected = ::onThemeModeSelected,
-            autoOpenOnSuccess = false,
+            autoOpenOnSuccess = true,
             onAutoOpenOnSuccessChanged = ::onAutoOpenOnSuccessChanged
         )
     )
